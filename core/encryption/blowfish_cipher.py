@@ -1,0 +1,30 @@
+from Crypto.Cipher import Blowfish
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
+from .base_cipher import BaseCipher
+
+
+class BlowfishCipher(BaseCipher):
+    """Blowfish в режиме CBC. Ключ 128 бит."""
+
+    KEY_SIZE = 16   # 128 бит (допустимо 4–56 байт)
+    BLOCK_SIZE = 8
+
+    @property
+    def name(self) -> str:
+        return "BLOWFISH"
+
+    def generate_key(self) -> bytes:
+        return get_random_bytes(self.KEY_SIZE)
+
+    def encrypt(self, data: bytes, key: bytes) -> bytes:
+        iv = get_random_bytes(self.BLOCK_SIZE)
+        cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
+        ct = cipher.encrypt(pad(data, self.BLOCK_SIZE))
+        return iv + ct
+
+    def decrypt(self, data: bytes, key: bytes) -> bytes:
+        iv = data[:self.BLOCK_SIZE]
+        ct = data[self.BLOCK_SIZE:]
+        cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
+        return unpad(cipher.decrypt(ct), self.BLOCK_SIZE)
