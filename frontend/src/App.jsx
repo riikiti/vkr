@@ -1,0 +1,192 @@
+import { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
+import OverviewTab from './components/tabs/OverviewTab';
+import EntropyTab from './components/tabs/EntropyTab';
+import AvalancheTab from './components/tabs/AvalancheTab';
+import DistributionTab from './components/tabs/DistributionTab';
+import ComparisonTab from './components/tabs/ComparisonTab';
+import ReportTab from './components/tabs/ReportTab';
+import { getConfig, runExperiment } from './api/client';
+
+const TABS = [
+  { id: 'overview', label: 'Обзор', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+  )},
+  { id: 'entropy', label: 'Энтропия', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+    </svg>
+  )},
+  { id: 'avalanche', label: 'Лавинный эффект', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+    </svg>
+  )},
+  { id: 'distribution', label: 'Распределение', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>
+    </svg>
+  )},
+  { id: 'comparison', label: 'Сравнение', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/><path d="M2 20h20"/>
+    </svg>
+  )},
+  { id: 'report', label: 'Отчёт', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+    </svg>
+  )},
+];
+
+function App() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    getConfig()
+      .then((res) => setConfig(res.data))
+      .catch(() => {
+        setConfig({
+          algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20'],
+          data_types: ['text', 'binary', 'random', 'image'],
+          data_sizes: [1024, 10240, 102400, 1048576],
+        });
+      });
+  }, []);
+
+  const handleRunExperiment = async (params) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await runExperiment(params);
+      setResults(res.data);
+      setActiveTab('overview');
+    } catch (err) {
+      setError(err.response?.data?.detail || err.message || 'Ошибка выполнения эксперимента');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderTab = () => {
+    if (!results) {
+      return (
+        <div className="flex items-center justify-center h-full fade-in">
+          <div className="text-center max-w-md">
+            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl flex items-center justify-center"
+                 style={{ background: 'linear-gradient(135deg, rgba(79,143,252,0.15), rgba(167,139,250,0.15))' }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <defs>
+                  <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#4f8ffc"/>
+                    <stop offset="100%" stopColor="#a78bfa"/>
+                  </linearGradient>
+                </defs>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+              CryptoAnalyzer
+            </h2>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              Платформа исследования криптостойкости алгоритмов шифрования с применением энтропийного анализа
+            </p>
+            <div className="flex items-center justify-center gap-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Настройте параметры в боковой панели и запустите эксперимент
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    switch (activeTab) {
+      case 'overview': return <OverviewTab results={results} />;
+      case 'entropy': return <EntropyTab results={results} />;
+      case 'avalanche': return <AvalancheTab results={results} />;
+      case 'distribution': return <DistributionTab results={results} />;
+      case 'comparison': return <ComparisonTab results={results} />;
+      case 'report': return <ReportTab results={results} />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="flex h-screen" style={{ background: 'var(--color-bg-primary)' }}>
+      <Sidebar config={config} onRun={handleRunExperiment} loading={loading} />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Tab bar */}
+        <header className="flex items-center px-6 shrink-0"
+          style={{
+            background: 'linear-gradient(180deg, var(--color-bg-secondary), var(--color-bg-primary))',
+            minHeight: '52px',
+            borderBottom: '1px solid var(--color-border)',
+          }}>
+          <nav className="flex gap-1">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+                  style={{
+                    color: isActive ? 'var(--color-accent-blue)' : 'var(--color-text-secondary)',
+                    background: isActive ? 'rgba(79,143,252,0.1)' : 'transparent',
+                  }}>
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </header>
+
+        {/* Error */}
+        {error && (
+          <div className="mx-6 mt-4 px-4 py-3 rounded-xl text-sm flex items-center gap-3 fade-in"
+            style={{ background: 'rgba(248,113,113,0.1)', color: 'var(--color-accent-red)', border: '1px solid rgba(248,113,113,0.2)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+            </svg>
+            {error}
+          </div>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center fade-in">
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="absolute inset-0 rounded-full pulse-glow"
+                  style={{ border: '3px solid rgba(79,143,252,0.2)' }}/>
+                <div className="absolute inset-0 rounded-full spinner"
+                  style={{ border: '3px solid transparent', borderTopColor: 'var(--color-accent-blue)' }}/>
+                <div className="absolute inset-3 rounded-full spinner"
+                  style={{ border: '2px solid transparent', borderTopColor: 'var(--color-accent-purple)', animationDirection: 'reverse', animationDuration: '1.5s' }}/>
+              </div>
+              <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Выполнение эксперимента...</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Это может занять некоторое время</p>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        {!loading && (
+          <main className="flex-1 overflow-auto p-6">
+            <div className="fade-in">{renderTab()}</div>
+          </main>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;

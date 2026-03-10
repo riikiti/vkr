@@ -2,7 +2,30 @@
   "permissions": {
     "allow": [
       "Bash(mkdir:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(streamlit run:*)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && npm create vite@latest frontend -- --template react 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npm install && npm install recharts axios react-markdown @tailwindcss/vite tailwindcss 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр\" && python -c \"\nimport py_compile, sys\nfiles = [\n    'backend/main.py',\n    'backend/config.py',\n    'backend/schemas.py',\n    'backend/api/__init__.py',\n    'backend/api/experiments.py',\n    'backend/api/reports.py',\n]\nok = True\nfor f in files:\n    try:\n        py_compile.compile\\(f, doraise=True\\)\n        print\\(f'OK: {f}'\\)\n    except py_compile.PyCompileError as e:\n        print\\(f'ERROR: {f}: {e}'\\)\n        ok = False\nif ok:\n    print\\('All files compile successfully.'\\)\n\")",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр\" && python -c \"\nimport sys\nsys.path.insert\\(0, '.'\\)\nsys.path.insert\\(0, './backend'\\)\nfrom main import app\nprint\\('FastAPI app imported successfully'\\)\nprint\\('Routes:'\\)\nfor route in app.routes:\n    if hasattr\\(route, 'methods'\\):\n        print\\(f'  {route.methods} {route.path}'\\)\n\")",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/backend\" && python -c \"\nfrom main import app\nprint\\('FastAPI app imported successfully'\\)\nprint\\('Routes:'\\)\nfor route in app.routes:\n    if hasattr\\(route, 'methods'\\):\n        print\\(f'  {route.methods} {route.path}'\\)\n\")",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр/backend\" && python -c \"from main import app; print\\('Backend imports OK'\\)\" 2>&1)",
+      "Read(//tmp/**)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр/frontend\" && npm run build 2>&1 | tail -15)",
+      "Bash(pkill -f \"uvicorn main:app\" 2>/dev/null; pkill -f \"vite\" 2>/dev/null; sleep 1 && echo \"Processes killed\")",
+      "Bash(pkill -f vite 2>/dev/null; pkill -f uvicorn 2>/dev/null; pkill -f \"node.*frontend\" 2>/dev/null; sleep 3 && echo \"Killed all\")",
+      "Bash(lsof -i:5173 -i:5174 -i:5175 -i:5176 -i:8000 2>/dev/null || echo \"All ports are free\")",
+      "Bash(find \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\interface\" -type f -name \"*.py\" 2>/dev/null | head -10)",
+      "Bash(find \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\visualization\" -type f -name \"*.py\" 2>/dev/null | head -10)",
+      "Bash(find \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\experiments\" -type f -name \"*.py\" 2>/dev/null | head -10)",
+      "Bash(grep -r \"from experiments\\\\|import experiments\" \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" --include=\"*.py\" 2>/dev/null | head -20)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && rm -rf interface/ visualization/ experiments/ && rm -f requirements.txt && echo \"Removed dead code\")",
+      "Bash(pkill -f vite 2>/dev/null; pkill -f uvicorn 2>/dev/null; pkill -f \"node.*frontend\" 2>/dev/null; echo \"Killed\")",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker compose up --build -d 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker compose -p cryptoanalyzer up --build -d 2>&1)",
+      "Bash(docker compose:*)",
+      "Bash(curl -s -X POST http://localhost:8000/api/experiments/run -H \"Content-Type: application/json\" -d '{\"algorithms\":[\"AES\"],\"data_types\":[\"text\"],\"data_sizes\":[1024],\"avalanche_iterations\":10}' 2>&1 | python -m json.tool 2>&1 | head -80)"
     ]
   }
 }
