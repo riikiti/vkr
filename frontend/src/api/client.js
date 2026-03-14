@@ -14,6 +14,8 @@ export const getConfig = () => client.get('/config');
 
 export const runExperiment = (params) => client.post('/experiments/run', params);
 
+export const runTrace = (params) => client.post('/experiments/trace', params);
+
 export const generateReport = (format, results) =>
   client.post('/reports/generate', {
     format,

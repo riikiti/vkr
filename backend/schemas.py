@@ -76,6 +76,21 @@ class ReportRequest(BaseModel):
     distribution_results: list[dict[str, Any]] = []
 
 
+class TraceRequest(BaseModel):
+    """Request body for step-by-step encryption trace."""
+    algorithms: list[str] = Field(
+        description="List of algorithm names to trace"
+    )
+    data_types: list[str] = Field(
+        default=["text"],
+        description="List of data types to trace, e.g. ['text', 'random', 'zeros']"
+    )
+    data_size: int = Field(
+        default=256,
+        description="Size of generated data in bytes (kept small for readable hex output)"
+    )
+
+
 class ConfigResponse(BaseModel):
     """Available configuration options."""
     algorithms: list[str]

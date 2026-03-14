@@ -33,7 +33,10 @@ from schemas import (
     ExperimentRequest,
     ExperimentResponse,
     ConfigResponse,
+    TraceRequest,
 )
+
+from core.entropy.shannon_entropy import calculate_shannon_entropy
 
 router = APIRouter(prefix="/api", tags=["experiments"])
 
@@ -203,3 +206,220 @@ def run_experiments(request: ExperimentRequest):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Experiment failed: {str(e)}")
+
+
+def _bytes_to_hex_preview(data: bytes, max_bytes: int = 64) -> str:
+    """Convert bytes to hex string, truncated."""
+    hex_str = data[:max_bytes].hex()
+    # Insert spaces every 2 chars for readability
+    spaced = " ".join(hex_str[i:i+2] for i in range(0, len(hex_str), 2))
+    if len(data) > max_bytes:
+        spaced += " ..."
+    return spaced
+
+
+def _bytes_freq(data: bytes) -> list[int]:
+    """Get byte frequency distribution (256 buckets)."""
+    freq = [0] * 256
+    for b in data:
+        freq[b] += 1
+    return freq
+
+
+DATA_TYPE_LABELS = {
+    "text": "Текст (русский)",
+    "binary": "Бинарный паттерн",
+    "random": "Случайные данные",
+    "image": "Изображение (пиксели)",
+    "zeros": "Нулевые байты",
+    "structured": "JSON-структура",
+    "incremental": "Счётчик (0..255)",
+}
+
+
+def _text_preview(data: bytes, max_chars: int = 120) -> str:
+    """Try to decode as UTF-8 text, fallback to hex summary."""
+    try:
+        text = data[:max_chars].decode("utf-8", errors="replace")
+        if len(data) > max_chars:
+            text += "..."
+        return text
+    except Exception:
+        return f"<бинарные данные, {len(data)} байт>"
+
+
+@router.post("/experiments/trace")
+def run_trace(request: TraceRequest):
+    """
+    Run a step-by-step encryption trace for generated data across
+    selected algorithms and data types.
+    Returns detailed intermediate data for each stage of the encryption pipeline.
+    """
+    try:
+        # Cap trace size to keep hex output readable
+        trace_size = min(request.data_size, 1024)
+
+        traces = []
+
+        for algo_name in request.algorithms:
+            algo_upper = algo_name.upper()
+            if algo_upper not in ALGORITHMS:
+                raise HTTPException(status_code=400, detail=f"Unknown algorithm: {algo_name}")
+
+            cipher = get_cipher(algo_upper)
+            key = cipher.generate_key()
+
+            is_stream = algo_upper == "RC4"
+            block_size = getattr(cipher, "BLOCK_SIZE", None)
+            key_size = getattr(cipher, "KEY_SIZE", 16)
+
+            for data_type in request.data_types:
+                plaintext = generate_data(data_type, trace_size)
+                data_label = DATA_TYPE_LABELS.get(data_type, data_type)
+
+                steps = []
+
+                # Step 1: Generated input data
+                steps.append({
+                    "step": 1,
+                    "title": f"Исходные данные — {data_label}",
+                    "description": f"Сгенерированные данные типа «{data_label}», {len(plaintext)} байт",
+                    "data_text": _text_preview(plaintext),
+                    "data_hex": _bytes_to_hex_preview(plaintext, 128),
+                    "data_size": len(plaintext),
+                    "entropy": round(calculate_shannon_entropy(plaintext), 4),
+                    "freq": _bytes_freq(plaintext),
+                })
+
+                # Step 2: Key generation
+                steps.append({
+                    "step": 2,
+                    "title": "Генерация ключа",
+                    "description": f"Криптографически случайный ключ ({key_size * 8} бит)",
+                    "data_hex": _bytes_to_hex_preview(key, 128),
+                    "data_size": len(key),
+                    "key_size_bits": key_size * 8,
+                })
+
+                # Step 3: Padding
+                if not is_stream and block_size:
+                    from Crypto.Util.Padding import pad as crypto_pad
+                    padded = crypto_pad(plaintext, block_size)
+                    padding_bytes = len(padded) - len(plaintext)
+                    steps.append({
+                        "step": 3,
+                        "title": f"Дополнение (PKCS7, блок {block_size} байт)",
+                        "description": f"Добавлено {padding_bytes} байт для выравнивания по размеру блока ({block_size} байт)",
+                        "data_hex": _bytes_to_hex_preview(padded, 128),
+                        "data_size": len(padded),
+                        "padding_bytes": padding_bytes,
+                        "block_size": block_size,
+                        "num_blocks": len(padded) // block_size,
+                    })
+                else:
+                    steps.append({
+                        "step": 3,
+                        "title": "Дополнение не требуется",
+                        "description": "RC4 — потоковый шифр, не требует выравнивания по блокам",
+                        "data_hex": _bytes_to_hex_preview(plaintext, 128),
+                        "data_size": len(plaintext),
+                    })
+
+                # Step 4: IV generation
+                if not is_stream and block_size:
+                    iv_demo = key[:block_size]
+                    steps.append({
+                        "step": 4,
+                        "title": "Генерация вектора инициализации (IV)",
+                        "description": f"Случайный IV длиной {block_size} байт для режима CBC. Передаётся вместе с шифротекстом.",
+                        "data_hex": _bytes_to_hex_preview(iv_demo, 128),
+                        "data_size": block_size,
+                    })
+
+                # Step 5: Encryption
+                ciphertext, enc_time = cipher.encrypt_timed(plaintext, key)
+
+                if not is_stream and block_size:
+                    iv_in_ct = ciphertext[:block_size]
+                    ct_only = ciphertext[block_size:]
+                    steps.append({
+                        "step": 5,
+                        "title": "Шифрование (результат)",
+                        "description": f"Режим CBC. Время: {enc_time*1000:.2f} мс",
+                        "data_hex": _bytes_to_hex_preview(ct_only, 128),
+                        "data_size": len(ct_only),
+                        "entropy": round(calculate_shannon_entropy(ct_only), 4),
+                        "freq": _bytes_freq(ct_only),
+                        "encrypt_time_ms": round(enc_time * 1000, 3),
+                        "iv_hex": _bytes_to_hex_preview(iv_in_ct, 128),
+                    })
+                else:
+                    steps.append({
+                        "step": 5,
+                        "title": "Шифрование (результат)",
+                        "description": f"Потоковый шифр RC4. Время: {enc_time*1000:.2f} мс",
+                        "data_hex": _bytes_to_hex_preview(ciphertext, 128),
+                        "data_size": len(ciphertext),
+                        "entropy": round(calculate_shannon_entropy(ciphertext), 4),
+                        "freq": _bytes_freq(ciphertext),
+                        "encrypt_time_ms": round(enc_time * 1000, 3),
+                    })
+
+                # Step 6: Full ciphertext
+                steps.append({
+                    "step": 6,
+                    "title": "Итоговый шифротекст (передаваемые данные)",
+                    "description": f"{'IV + шифротекст' if not is_stream else 'Шифротекст'} — данные, которые передаются получателю",
+                    "data_hex": _bytes_to_hex_preview(ciphertext, 128),
+                    "data_size": len(ciphertext),
+                    "entropy": round(calculate_shannon_entropy(ciphertext), 4),
+                    "freq": _bytes_freq(ciphertext),
+                    "size_overhead": len(ciphertext) - len(plaintext),
+                })
+
+                # Step 7: Decryption verification
+                try:
+                    decrypted = cipher.decrypt(ciphertext, key)
+                    decrypted_text = _text_preview(decrypted)
+                    match = decrypted == plaintext
+                except Exception:
+                    decrypted_text = "<ошибка дешифрования>"
+                    decrypted = b""
+                    match = False
+
+                steps.append({
+                    "step": 7,
+                    "title": "Дешифрование (проверка)",
+                    "description": "Обратное преобразование для проверки корректности",
+                    "data_text": decrypted_text,
+                    "data_hex": _bytes_to_hex_preview(decrypted if match else b"", 128),
+                    "data_size": len(decrypted) if match else 0,
+                    "match": match,
+                })
+
+                traces.append({
+                    "algorithm": algo_upper,
+                    "data_type": data_type,
+                    "data_type_label": data_label,
+                    "data_size": trace_size,
+                    "key_hex": _bytes_to_hex_preview(key, 128),
+                    "key_size_bits": key_size * 8,
+                    "is_stream": is_stream,
+                    "block_size": block_size if not is_stream else None,
+                    "mode": "Stream" if is_stream else "CBC",
+                    "steps": steps,
+                    "entropy_plain": round(calculate_shannon_entropy(plaintext), 4),
+                    "entropy_cipher": round(calculate_shannon_entropy(ciphertext), 4),
+                })
+
+        return {
+            "data_types": request.data_types,
+            "data_size": trace_size,
+            "traces": traces,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Trace failed: {str(e)}")

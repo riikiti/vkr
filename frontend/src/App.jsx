@@ -6,7 +6,8 @@ import AvalancheTab from './components/tabs/AvalancheTab';
 import DistributionTab from './components/tabs/DistributionTab';
 import ComparisonTab from './components/tabs/ComparisonTab';
 import ReportTab from './components/tabs/ReportTab';
-import { getConfig, runExperiment } from './api/client';
+import EncryptionTraceTab from './components/tabs/EncryptionTraceTab';
+import { getConfig, runExperiment, runTrace } from './api/client';
 
 const TABS = [
   { id: 'overview', label: 'Обзор', icon: (
@@ -34,6 +35,11 @@ const TABS = [
       <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/><path d="M2 20h20"/>
     </svg>
   )},
+  { id: 'trace', label: 'Путь шифрования', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+  )},
   { id: 'report', label: 'Отчёт', icon: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
@@ -48,6 +54,7 @@ function App() {
   const [error, setError] = useState(null);
   const [config, setConfig] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [traceData, setTraceData] = useState(null);
 
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
@@ -70,8 +77,18 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const res = await runExperiment(params);
-      setResults(res.data);
+      // Run experiment and trace in parallel
+      const traceSize = Math.min(...(params.data_sizes || [1024]), 1024);
+      const [expRes, traceRes] = await Promise.all([
+        runExperiment(params),
+        runTrace({
+          algorithms: params.algorithms,
+          data_types: params.data_types,
+          data_size: traceSize,
+        }).catch(() => null), // trace failure shouldn't block the experiment
+      ]);
+      setResults(expRes.data);
+      if (traceRes) setTraceData(traceRes.data);
       setActiveTab('overview');
     } catch (err) {
       setError(err.response?.data?.detail || err.message || 'Ошибка выполнения эксперимента');
@@ -81,6 +98,11 @@ function App() {
   };
 
   const renderTab = () => {
+    // Trace tab works independently of experiment results
+    if (activeTab === 'trace') {
+      return <EncryptionTraceTab traceData={traceData} />;
+    }
+
     if (!results) {
       return (
         <div className="flex items-center justify-center h-full fade-in">

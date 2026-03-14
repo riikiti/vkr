@@ -34,7 +34,17 @@
       "Bash(docker stop:*)",
       "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npm install remark-gfm 2>&1 | tail -5)",
       "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build --mode development 2>&1 | tail -5)",
-      "Bash(curl -s http://localhost:8000/api/config | python -m json.tool 2>&1)"
+      "Bash(curl -s http://localhost:8000/api/config | python -m json.tool 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\frontend\" && npx vite build 2>&1 | tail -20)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && python -c \"from backend.api.experiments import router; print\\('OK'\\)\" 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker-compose up -d --build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker-compose -p cryptoanalyzer up -d --build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && python -c \"from backend.api.experiments import router; print\\('Backend OK'\\)\" 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\frontend\" && npx vite build 2>&1 | tail -10)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\frontend\" && npx vite build 2>&1 | tail -5)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker-compose -p cryptoanalyzer up -d --build 2>&1 | tail -15)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\\\\frontend\" && npx vite build 2>&1 | tail -3)",
+      "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker-compose -p cryptoanalyzer up -d --build 2>&1 | tail -8)"
     ]
   }
 }

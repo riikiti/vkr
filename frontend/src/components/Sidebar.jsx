@@ -133,6 +133,7 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
     }
   }, [config]);
 
+
   const toggleItem = (list, setList, item) => {
     setList((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
