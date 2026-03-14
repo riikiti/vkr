@@ -14,7 +14,8 @@ ALGORITHMS = [
     "DES",
     "BLOWFISH",
     "RC4",
-    "CHACHA20",
+    "3DES",
+    "GOST",
 ]
 
 # Типы входных данных для генерации

@@ -33,7 +33,8 @@
       "Bash(docker ps:*)",
       "Bash(docker stop:*)",
       "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npm install remark-gfm 2>&1 | tail -5)",
-      "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build --mode development 2>&1 | tail -5)"
+      "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build --mode development 2>&1 | tail -5)",
+      "Bash(curl -s http://localhost:8000/api/config | python -m json.tool 2>&1)"
     ]
   }
 }

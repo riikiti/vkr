@@ -45,8 +45,8 @@ def compare_block_vs_stream(df: pd.DataFrame) -> dict:
     """
     Сравнивает блочные и потоковые шифры по метрикам.
     """
-    block_algos = ["AES", "DES", "BLOWFISH"]
-    stream_algos = ["RC4", "CHACHA20"]
+    block_algos = ["AES", "DES", "BLOWFISH", "3DES", "GOST"]
+    stream_algos = ["RC4"]
 
     block_df = df[df["algorithm"].isin(block_algos)]
     stream_df = df[df["algorithm"].isin(stream_algos)]

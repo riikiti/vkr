@@ -2,7 +2,8 @@ from .aes_cipher import AESCipher
 from .des_cipher import DESCipher
 from .blowfish_cipher import BlowfishCipher
 from .rc4_cipher import RC4Cipher
-from .chacha20_cipher import ChaCha20Cipher
+from .triple_des_cipher import TripleDESCipher
+from .gost_cipher import GostCipher
 from .base_cipher import BaseCipher
 
 CIPHER_REGISTRY = {
@@ -10,7 +11,8 @@ CIPHER_REGISTRY = {
     "DES": DESCipher,
     "BLOWFISH": BlowfishCipher,
     "RC4": RC4Cipher,
-    "CHACHA20": ChaCha20Cipher,
+    "3DES": TripleDESCipher,
+    "GOST": GostCipher,
 }
 
 

@@ -50,11 +50,16 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
+    const tab = TABS.find((t) => t.id === activeTab);
+    document.title = tab ? `${tab.label} — CryptoAnalyzer` : 'CryptoAnalyzer';
+  }, [activeTab]);
+
+  useEffect(() => {
     getConfig()
       .then((res) => setConfig(res.data))
       .catch(() => {
         setConfig({
-          algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20'],
+          algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', '3DES', 'GOST'],
           data_types: ['text', 'binary', 'random', 'image'],
           data_sizes: [1024, 10240, 102400, 1048576],
         });

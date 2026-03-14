@@ -5,7 +5,7 @@ from typing import Any
 class ExperimentRequest(BaseModel):
     """Request body for running experiments."""
     algorithms: list[str] = Field(
-        description="List of algorithm names, e.g. ['AES', 'DES', 'CHACHA20']"
+        description="List of algorithm names, e.g. ['AES', 'DES', '3DES', 'GOST']"
     )
     data_types: list[str] = Field(
         description="List of data types, e.g. ['text', 'binary', 'random', 'image']"

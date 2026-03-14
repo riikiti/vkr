@@ -125,8 +125,8 @@ function ReportTab({ results }) {
       md += `| ${alg} | ${mean.toFixed(4)} | ${std.toFixed(4)} | ${deviation.toFixed(4)} | ${good ? 'Хорошо' : 'Плохо'} |\n`;
     });
 
-    const streamAlgs = algorithms.filter(a => ['RC4', 'CHACHA20'].includes(a));
-    const blockAlgs = algorithms.filter(a => ['AES', 'DES', 'BLOWFISH'].includes(a));
+    const streamAlgs = algorithms.filter(a => ['RC4'].includes(a));
+    const blockAlgs = algorithms.filter(a => ['AES', 'DES', 'BLOWFISH', '3DES', 'GOST'].includes(a));
     if (streamAlgs.length > 0 && blockAlgs.length > 0) {
       const blockAvg = avg(blockAlgs.map(a => avalByAlg[a] ? avg(avalByAlg[a].means) : 0));
       const streamAvg = avg(streamAlgs.map(a => avalByAlg[a] ? avg(avalByAlg[a].means) : 0));
@@ -194,14 +194,99 @@ function ReportTab({ results }) {
       });
     }
 
-    // === 7. CONCLUSIONS ===
-    md += `\n## ${distribution_results.length > 0 ? '7' : '6'}. Выводы\n\n`;
+    // === 7. SENSITIVITY ANALYSIS ===
+    let sectionNum = distribution_results.length > 0 ? 7 : 6;
+    md += `\n## ${sectionNum}. Анализ чувствительности метода\n\n`;
+    md += `Анализ чувствительности показывает, насколько стабильны результаты оценки при изменении параметров эксперимента.\n\n`;
+
+    // Sensitivity by data size
+    const sizeGroups = {};
+    entropy_results.forEach((r) => {
+      const sz = r.data_size;
+      if (!sizeGroups[sz]) sizeGroups[sz] = {};
+      if (!sizeGroups[sz][r.algorithm]) sizeGroups[sz][r.algorithm] = { entropy: [], kl: [] };
+      sizeGroups[sz][r.algorithm].entropy.push(r.shannon_entropy_cipher);
+      sizeGroups[sz][r.algorithm].kl.push(r.kl_divergence);
+    });
+
+    const sizes = Object.keys(sizeGroups).map(Number).sort((a, b) => a - b);
+    const sizeLabels = { 1024: '1 KB', 10240: '10 KB', 102400: '100 KB', 1048576: '1 MB' };
+
+    if (sizes.length > 1) {
+      md += `### ${sectionNum}.1 Влияние размера данных на энтропию шифротекста\n\n`;
+      md += `| Алгоритм |`;
+      sizes.forEach((sz) => { md += ` ${sizeLabels[sz] || sz + ' B'} |`; });
+      md += ` Δ (макс−мин) |\n`;
+      md += `| -------- |`;
+      sizes.forEach(() => { md += ` -------- |`; });
+      md += ` ------------- |\n`;
+
+      algorithms.forEach((alg) => {
+        const vals = sizes.map((sz) => {
+          const d = sizeGroups[sz]?.[alg];
+          return d ? avg(d.entropy) : null;
+        });
+        const valid = vals.filter((v) => v !== null);
+        const delta = valid.length > 1 ? Math.max(...valid) - Math.min(...valid) : 0;
+        md += `| ${alg} |`;
+        vals.forEach((v) => { md += ` ${v !== null ? v.toFixed(4) : '—'} |`; });
+        md += ` ${delta.toFixed(4)} |\n`;
+      });
+
+      md += `\nМалое значение Δ указывает на стабильность метода: результат не зависит от объёма входных данных.\n`;
+    }
+
+    // Sensitivity by data type (entropy spread)
+    md += `\n### ${sectionNum}.2 Чувствительность к типу входных данных\n\n`;
+    md += `| Алгоритм | H(шифр.) мин | H(шифр.) макс | Разброс | Стабильность |\n`;
+    md += `| -------- | ------------ | ------------- | ------- | ------------ |\n`;
+    algorithms.forEach((alg) => {
+      const cipherEntropies = [];
+      dataTypes.forEach((dt) => {
+        const d = entropyByAlgType[`${alg}|${dt}`];
+        if (d) cipherEntropies.push(avg(d.cipher));
+      });
+      if (cipherEntropies.length === 0) return;
+      const minH = Math.min(...cipherEntropies);
+      const maxH = Math.max(...cipherEntropies);
+      const spread = maxH - minH;
+      const stability = spread < 0.01 ? 'Высокая' : spread < 0.05 ? 'Средняя' : 'Низкая';
+      md += `| ${alg} | ${minH.toFixed(4)} | ${maxH.toFixed(4)} | ${spread.toFixed(4)} | ${stability} |\n`;
+    });
+    md += `\nРазброс энтропии шифротекста для разных типов входных данных характеризует чувствительность алгоритма к структуре входа. Низкий разброс (< 0.01) означает, что алгоритм полностью маскирует входную структуру.\n`;
+
+    // === 8. NIST COMPARISON ===
+    sectionNum++;
+    md += `\n## ${sectionNum}. Сравнительный анализ с методикой NIST SP 800-22\n\n`;
+    md += `Стандарт NIST SP 800-22 определяет набор из 15 статистических тестов для оценки случайности последовательностей. В данном исследовании реализованы методы, пересекающиеся с NIST:\n\n`;
+    md += `| Наш метод | Аналог NIST SP 800-22 | Что оценивает |\n`;
+    md += `| --------- | --------------------- | ------------- |\n`;
+    md += `| Энтропия Шеннона | Approximate Entropy Test | Непредсказуемость выходной последовательности |\n`;
+    md += `| Тест хи-квадрат (χ²) | Frequency (Monobit) Test | Равномерность распределения байтов |\n`;
+    md += `| Корреляция Пирсона | Serial Test / Runs Test | Независимость соседних элементов |\n`;
+    md += `| KL-дивергенция | Discrete Fourier Transform Test | Отклонение от равномерного распределения |\n`;
+    md += `| Лавинный эффект | — (не входит в NIST) | Диффузия: реакция на изменение 1 бита входа |\n`;
+    md += `| Взаимная информация | — (не входит в NIST) | Утечка информации о plaintext в ciphertext |\n\n`;
+
+    md += `**Преимущества нашего подхода** по сравнению с NIST SP 800-22:\n\n`;
+    md += `- Ориентация на оценку **криптостойкости шифров**, а не просто случайности выхода генератора\n`;
+    md += `- Анализ **зависимости** между открытым текстом и шифротекстом (корреляция, MI), а не только свойств выходной последовательности\n`;
+    md += `- Комплексная **метрика ранжирования**, позволяющая количественно сравнить алгоритмы между собой\n`;
+    md += `- Тестирование на **различных типах входных данных** с разной начальной энтропией (0–8 бит/байт)\n\n`;
+
+    md += `**Ограничения:**\n\n`;
+    md += `- NIST SP 800-22 включает тесты, не реализованные в данной работе (Universal, Lempel-Ziv, Linear Complexity и др.)\n`;
+    md += `- Наш метод не оценивает линейную сложность и спектральные характеристики последовательности\n`;
+
+    // === 9. CONCLUSIONS ===
+    sectionNum++;
+    md += `\n## ${sectionNum}. Выводы\n\n`;
 
     if (ranking.length > 0) {
       const best = ranking[0];
       const worst = ranking[ranking.length - 1];
       md += `1. **Лучший алгоритм** по комплексной оценке — **${best.algorithm}** (${(best.total_score * 100).toFixed(1)}%).`;
-      if (best.algorithm === 'AES' || best.algorithm === 'CHACHA20') {
+      if (best.algorithm === 'AES' || best.algorithm === '3DES' || best.algorithm === 'GOST') {
         md += ` Это подтверждает его статус современного стандарта шифрования.`;
       }
       md += `\n\n`;
@@ -214,8 +299,18 @@ function ReportTab({ results }) {
     }
 
     md += `3. **Влияние типа данных:** все исследованные алгоритмы показали способность приводить энтропию шифротекста к значениям, близким к теоретическому максимуму (8.0 бит/байт), независимо от энтропии входных данных — от нулевых данных (0 бит) до случайных (8 бит).\n\n`;
-    md += `4. **Блочные vs потоковые:** блочные шифры (AES, DES, Blowfish) обеспечивают лучший лавинный эффект благодаря многораундовым подстановкам и перестановкам. Потоковые шифры (RC4, ChaCha20) выполняют XOR с ключевым потоком, что обеспечивает высокую энтропию, но не создаёт лавинного эффекта при изменении открытого текста.\n\n`;
-    md += `5. **Практическая рекомендация:** для задач, требующих высокой криптостойкости, рекомендуется использовать AES-256 или ChaCha20. DES и RC4 не следует применять в новых системах.\n`;
+    md += `4. **Блочные vs потоковые:** блочные шифры (AES, DES, 3DES, ГОСТ 28147-89, Blowfish) обеспечивают лучший лавинный эффект благодаря многораундовым подстановкам и перестановкам. Потоковый шифр RC4 выполняет XOR с ключевым потоком, что обеспечивает высокую энтропию, но не создаёт лавинного эффекта при изменении открытого текста.\n\n`;
+    md += `5. **Практическая рекомендация:** для задач, требующих высокой криптостойкости, рекомендуется использовать AES-256, ГОСТ 28147-89 или 3DES. DES и RC4 не следует применять в новых системах.\n`;
+
+    // === 10. PERSPECTIVES ===
+    sectionNum++;
+    md += `\n## ${sectionNum}. Перспективы дальнейшего развития\n\n`;
+    md += `1. **Расширение набора статистических тестов:** реализация полного набора NIST SP 800-22 (Universal Statistical Test, Lempel-Ziv Compression Test, Linear Complexity Test) для более глубокой оценки случайности.\n\n`;
+    md += `2. **Постквантовые алгоритмы:** включение в исследование алгоритмов, устойчивых к квантовым атакам (CRYSTALS-Kyber, CRYSTALS-Dilithium), для оценки их энтропийных характеристик.\n\n`;
+    md += `3. **Анализ режимов шифрования:** сравнение режимов работы блочных шифров (CBC, CTR, GCM, OCB) и их влияния на статистические свойства шифротекста.\n\n`;
+    md += `4. **Масштабирование:** тестирование на больших объёмах данных (10 MB — 1 GB) для выявления зависимости криптостойкости от размера входа в промышленных условиях.\n\n`;
+    md += `5. **Автоматизация мониторинга:** интеграция разработанной платформы в CI/CD-процессы для непрерывного контроля качества криптографических модулей.\n\n`;
+    md += `6. **Временной анализ:** добавление side-channel анализа — исследование корреляции между временем шифрования и содержимым данных для выявления timing-атак.\n`;
 
     return md;
   };
