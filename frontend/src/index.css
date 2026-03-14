@@ -277,6 +277,18 @@ aside section {
   display: none;
 }
 
+/* Report header */
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.report-download-btns {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 /* ===== Mobile: <= 768px ===== */
 @media (max-width: 768px) {
   .sidebar {
@@ -366,6 +378,26 @@ aside section {
   .max-w-md {
     max-width: 100%;
     padding: 0 8px;
+  }
+
+  /* Report header stacked on mobile */
+  .report-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .report-download-btns {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .report-download-btns button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Report content less padding on mobile */
+  .report-content {
+    padding: 20px !important;
   }
 }
 

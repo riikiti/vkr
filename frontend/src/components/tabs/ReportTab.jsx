@@ -251,9 +251,9 @@ function ReportTab({ results }) {
 
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
-      <div className="flex items-center justify-between">
+      <div className="report-header">
         <div className="section-title flex-1"><h2>Отчёт</h2></div>
-        <div className="flex gap-3 shrink-0">
+        <div className="report-download-btns">
           {downloadBtns.map(({ format, label, ext, color }) => (
             <button key={format}
               onClick={() => handleDownload(format)}
