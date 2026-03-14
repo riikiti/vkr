@@ -1,5 +1,5 @@
 import numpy as np
-from config import AVALANCHE_TESTS, AVALANCHE_IDEAL
+from config import AVALANCHE_TESTS, AVALANCHE_IDEAL, AVALANCHE_TOLERANCE
 
 
 def flip_bit(data: bytes, bit_pos: int) -> bytes:
@@ -45,6 +45,10 @@ def run_avalanche_test(
 ) -> dict:
     """
     Запускает полный тест лавинного эффекта для одного алгоритма.
+
+    Использует encrypt_deterministic() с фиксированным IV/nonce,
+    чтобы измерять именно влияние изменения 1 бита открытого текста
+    на шифротекст, а не разницу от случайных IV.
     """
     rng = np.random.default_rng(seed=random_seed)
     total_bits = len(data) * 8
@@ -52,14 +56,14 @@ def run_avalanche_test(
     if total_bits == 0:
         raise ValueError("Данные не могут быть пустыми")
 
-    # Базовый шифртекст
-    ciphertext_base = cipher.encrypt(data, key)
+    # Базовый шифртекст (с фиксированным IV, None = нули по умолчанию)
+    ciphertext_base = cipher.encrypt_deterministic(data, key, iv=None)
     coefficients = []
 
     for _ in range(n_tests):
         bit_pos = int(rng.integers(0, total_bits))
         data_flipped = flip_bit(data, bit_pos)
-        ciphertext_flipped = cipher.encrypt(data_flipped, key)
+        ciphertext_flipped = cipher.encrypt_deterministic(data_flipped, key, iv=None)
         coef = avalanche_coefficient(ciphertext_base, ciphertext_flipped)
         coefficients.append(coef)
 
@@ -73,7 +77,7 @@ def run_avalanche_test(
         "min_val": float(np.min(coefficients)),
         "max_val": float(np.max(coefficients)),
         "coefficients": coefficients.tolist(),
-        "is_good": bool(abs(np.mean(coefficients) - AVALANCHE_IDEAL) < 0.1),
+        "is_good": bool(abs(np.mean(coefficients) - AVALANCHE_IDEAL) < AVALANCHE_TOLERANCE),
     }
 
 
@@ -85,16 +89,15 @@ def run_avalanche_test_per_bit(
 ) -> dict:
     """
     Тест лавинного эффекта для каждого из sample_bits позиций.
-    Позволяет построить тепловую карту.
     """
-    ciphertext_base = cipher.encrypt(data, key)
+    ciphertext_base = cipher.encrypt_deterministic(data, key, iv=None)
     total_bits = min(len(data) * 8, sample_bits)
     positions = list(range(total_bits))
     coefficients = []
 
     for pos in positions:
         data_flipped = flip_bit(data, pos)
-        ciphertext_flipped = cipher.encrypt(data_flipped, key)
+        ciphertext_flipped = cipher.encrypt_deterministic(data_flipped, key)
         coef = avalanche_coefficient(ciphertext_base, ciphertext_flipped)
         coefficients.append(coef)
 

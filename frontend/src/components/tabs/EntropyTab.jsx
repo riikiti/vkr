@@ -12,6 +12,16 @@ const SIZE_LABELS = {
   1048576: '1 MB',
 };
 
+const DATA_TYPE_LABELS = {
+  text: 'Текст',
+  binary: 'Паттерн',
+  random: 'Случайные',
+  image: 'Изображение',
+  zeros: 'Нули',
+  structured: 'JSON',
+  incremental: 'Счётчик',
+};
+
 const tooltipStyle = {
   background: 'var(--color-bg-card)',
   border: '1px solid var(--color-border-light)',
@@ -49,13 +59,13 @@ function EntropyTab({ results }) {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title"><h2>Анализ энтропии</h2></div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="glass-card p-5 fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+      <div className="grid grid-cols-1 xl:grid-cols-2" style={{ gap: '30px' }}>
+        <div className="glass-card fade-in" style={{ padding: '20px' }}>
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
               Энтропия Шеннона по алгоритмам
             </h3>
             <span className="text-[10px] px-2 py-1 rounded-md font-medium"
@@ -81,8 +91,8 @@ function EntropyTab({ results }) {
           </ResponsiveContainer>
         </div>
 
-        <div className="glass-card p-5 fade-in-delay-1">
-          <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="glass-card fade-in-delay-1" style={{ padding: '20px' }}>
+          <h3 className="font-semibold mb-5" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Энтропия vs размер данных
           </h3>
           <ResponsiveContainer width="100%" height={280}>
@@ -103,11 +113,8 @@ function EntropyTab({ results }) {
       </div>
 
       <div className="glass-card overflow-hidden fade-in-delay-2">
-        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Подробные метрики</h3>
-          <span className="text-[11px] font-medium" style={{ color: 'var(--color-text-muted)' }}>
-            {entropy_results.length} записей
-          </span>
+        <div className="px-6 flex items-center justify-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>Подробные метрики</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">
@@ -126,7 +133,7 @@ function EntropyTab({ results }) {
               {entropy_results.map((r, i) => (
                 <tr key={i}>
                   <td className="font-semibold">{r.algorithm}</td>
-                  <td>{r.data_type}</td>
+                  <td>{DATA_TYPE_LABELS[r.data_type] || r.data_type}</td>
                   <td>{SIZE_LABELS[r.data_size] || r.data_size}</td>
                   <td className="font-mono text-xs">{r.shannon_entropy_plain?.toFixed(4)}</td>
                   <td>

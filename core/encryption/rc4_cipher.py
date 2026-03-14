@@ -19,6 +19,11 @@ class RC4Cipher(BaseCipher):
         cipher = ARC4.new(key)
         return cipher.encrypt(data)
 
+    def encrypt_deterministic(self, data: bytes, key: bytes, iv: bytes = None) -> bytes:
+        # RC4 — потоковый шифр без IV, уже детерминирован
+        cipher = ARC4.new(key)
+        return cipher.encrypt(data)
+
     def decrypt(self, data: bytes, key: bytes) -> bytes:
         cipher = ARC4.new(key)
         return cipher.decrypt(data)

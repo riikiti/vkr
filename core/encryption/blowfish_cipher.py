@@ -23,6 +23,13 @@ class BlowfishCipher(BaseCipher):
         ct = cipher.encrypt(pad(data, self.BLOCK_SIZE))
         return iv + ct
 
+    def encrypt_deterministic(self, data: bytes, key: bytes, iv: bytes = None) -> bytes:
+        if iv is None:
+            iv = b'\x00' * self.BLOCK_SIZE
+        cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
+        ct = cipher.encrypt(pad(data, self.BLOCK_SIZE))
+        return ct
+
     def decrypt(self, data: bytes, key: bytes) -> bytes:
         iv = data[:self.BLOCK_SIZE]
         ct = data[self.BLOCK_SIZE:]

@@ -25,7 +25,15 @@
       "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker compose up --build -d 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\Ruslan\\\\Проекты\\\\вкр\" && docker compose -p cryptoanalyzer up --build -d 2>&1)",
       "Bash(docker compose:*)",
-      "Bash(curl -s -X POST http://localhost:8000/api/experiments/run -H \"Content-Type: application/json\" -d '{\"algorithms\":[\"AES\"],\"data_types\":[\"text\"],\"data_sizes\":[1024],\"avalanche_iterations\":10}' 2>&1 | python -m json.tool 2>&1 | head -80)"
+      "Bash(curl -s -X POST http://localhost:8000/api/experiments/run -H \"Content-Type: application/json\" -d '{\"algorithms\":[\"AES\"],\"data_types\":[\"text\"],\"data_sizes\":[1024],\"avalanche_iterations\":10}' 2>&1 | python -m json.tool 2>&1 | head -80)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build 2>&1 | tail -10)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр\" && python -c \"\nfrom data_generation import generate_data\nfrom core.encryption import get_cipher\nfrom core.avalanche.avalanche_test import run_avalanche_test\n\nfor alg in ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20']:\n    c = get_cipher\\(alg\\)\n    k = c.generate_key\\(\\)\n    d = generate_data\\('random', 1024\\)\n    r = run_avalanche_test\\(c, d, k, n_tests=50\\)\n    print\\(f'{alg:10s}: avalanche={r[\\\\\"mean\\\\\"]:.4f} +/- {r[\\\\\"std\\\\\"]:.4f}, good={r[\\\\\"is_good\\\\\"]}'\\)\n\nprint\\('All passed!'\\)\n\" 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр\" && python -c \"\nfrom data_generation import generate_data\nfrom core.encryption import get_cipher\nfrom core.entropy import analyze_all\nfrom core.statistics import analyze_all_statistics\nfrom core.avalanche.avalanche_test import run_avalanche_test\n\nprint\\('=== Data Types Entropy Spectrum ==='\\)\nfor dt in ['zeros', 'binary', 'structured', 'text', 'image', 'incremental', 'random']:\n    d = generate_data\\(dt, 10240\\)\n    from core.entropy.shannon_entropy import calculate_shannon_entropy\n    h = calculate_shannon_entropy\\(d\\)\n    print\\(f'  {dt:12s}: {h:.4f} bit/byte'\\)\n\nprint\\(\\)\nprint\\('=== Avalanche Effect ==='\\)\nfor alg in ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20']:\n    c = get_cipher\\(alg\\)\n    k = c.generate_key\\(\\)\n    d = generate_data\\('random', 1024\\)\n    r = run_avalanche_test\\(c, d, k, n_tests=50\\)\n    status = 'GOOD' if r['is_good'] else 'BAD'\n    print\\(f'  {alg:10s}: {r[\\\\\"mean\\\\\"]:.4f} +/- {r[\\\\\"std\\\\\"]:.4f} [{status}]'\\)\n\nprint\\(\\)\nprint\\('=== Zeros Correlation Fix ==='\\)\ncipher = get_cipher\\('AES'\\)\nkey = cipher.generate_key\\(\\)\nd = generate_data\\('zeros', 1024\\)\nct, _ = cipher.encrypt_timed\\(d, key\\)\nstats = analyze_all_statistics\\(d, ct\\)\nprint\\(f'  corr_pearson = {stats[\\\\\"corr_pearson\\\\\"]:.4f} \\(should be 0.0, not nan\\)'\\)\n\nprint\\(\\)\nprint\\('All OK!'\\)\n\" 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build 2>&1 | tail -5)",
+      "Bash(docker ps:*)",
+      "Bash(docker stop:*)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/frontend\" && npm install remark-gfm 2>&1 | tail -5)",
+      "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/frontend\" && npx vite build --mode development 2>&1 | tail -5)"
     ]
   }
 }

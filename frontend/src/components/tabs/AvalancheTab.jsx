@@ -43,11 +43,11 @@ function AvalancheTab({ results }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title"><h2>Лавинный эффект</h2></div>
 
-      <div className="rounded-xl p-4 flex items-start gap-3 fade-in"
-        style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)' }}>
+      <div className="rounded-xl flex items-start gap-4 fade-in"
+        style={{ padding: '20px', background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)' }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-purple)" strokeWidth="2" className="shrink-0 mt-0.5">
           <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
         </svg>
@@ -62,8 +62,8 @@ function AvalancheTab({ results }) {
         </div>
       </div>
 
-      <div className="glass-card p-5 fade-in-delay-1">
-        <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+      <div className="glass-card fade-in-delay-1" style={{ padding: '20px' }}>
+        <h3 className="font-semibold mb-5" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
           Коэффициент лавинного эффекта
         </h3>
         <ResponsiveContainer width="100%" height={350}>
@@ -87,10 +87,10 @@ function AvalancheTab({ results }) {
         </ResponsiveContainer>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 fade-in-delay-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 fade-in-delay-2" style={{ gap: '30px' }}>
         {chartData.map((r, i) => (
-          <div key={r.algorithm} className="glass-card p-5">
-            <div className="flex items-center justify-between mb-4">
+          <div key={r.algorithm} className="glass-card" style={{ padding: '20px' }}>
+            <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ background: COLORS[i % COLORS.length] }}/>
                 <h4 className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{r.algorithm}</h4>
@@ -102,7 +102,7 @@ function AvalancheTab({ results }) {
               </span>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-5">
               <div className="relative h-3 rounded-full overflow-hidden" style={{ background: 'var(--color-border)' }}>
                 <div className="absolute h-full rounded-full transition-all duration-500"
                   style={{

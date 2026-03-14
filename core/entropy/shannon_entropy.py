@@ -18,7 +18,7 @@ def calculate_shannon_entropy(data: bytes) -> float:
 
     # H = -Σ p·log₂(p)
     entropy = -np.sum(probabilities * np.log2(probabilities))
-    return float(entropy)
+    return max(0.0, float(entropy))
 
 
 def calculate_entropy_per_block(data: bytes, block_size: int = 256) -> list[float]:

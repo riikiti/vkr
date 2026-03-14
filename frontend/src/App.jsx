@@ -47,6 +47,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [config, setConfig] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     getConfig()
@@ -78,10 +79,10 @@ function App() {
     if (!results) {
       return (
         <div className="flex items-center justify-center h-full fade-in">
-          <div className="text-center max-w-md">
-            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl flex items-center justify-center"
-                 style={{ background: 'linear-gradient(135deg, rgba(79,143,252,0.15), rgba(167,139,250,0.15))' }}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="flex flex-col items-center max-w-md" style={{ gap: '20px' }}>
+            <div className="rounded-2xl flex items-center justify-center"
+                 style={{ width: '144px', height: '144px', background: 'linear-gradient(135deg, rgba(79,143,252,0.15), rgba(167,139,250,0.15))' }}>
+              <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
                 <defs>
                   <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#4f8ffc"/>
@@ -91,10 +92,10 @@ function App() {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
               CryptoAnalyzer
             </h2>
-            <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)', textAlign: 'center' }}>
               Платформа исследования криптостойкости алгоритмов шифрования с применением энтропийного анализа
             </p>
             <div className="flex items-center justify-center gap-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
@@ -119,30 +120,57 @@ function App() {
     }
   };
 
+  const handleRunAndCloseSidebar = (params) => {
+    setSidebarOpen(false);
+    handleRunExperiment(params);
+  };
+
   return (
     <div className="flex h-screen" style={{ background: 'var(--color-bg-primary)' }}>
-      <Sidebar config={config} onRun={handleRunExperiment} loading={loading} />
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <Sidebar
+        config={config}
+        onRun={handleRunAndCloseSidebar}
+        loading={loading}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Tab bar */}
-        <header className="flex items-center px-6 shrink-0"
+        <header className="flex items-center shrink-0"
           style={{
+            paddingLeft: '30px',
+            paddingRight: '30px',
             background: 'linear-gradient(180deg, var(--color-bg-secondary), var(--color-bg-primary))',
-            minHeight: '52px',
+            minHeight: '60px',
             borderBottom: '1px solid var(--color-border)',
           }}>
-          <nav className="flex gap-1">
+          {/* Mobile hamburger */}
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setSidebarOpen(true)}
+            style={{ background: 'none', border: 'none', color: 'var(--color-text-primary)', cursor: 'pointer', marginRight: '12px', padding: '4px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <nav className="flex tab-nav" style={{ gap: '20px' }}>
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+                  className="flex items-center gap-2 px-5 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer whitespace-nowrap"
                   style={{
                     color: isActive ? 'var(--color-accent-blue)' : 'var(--color-text-secondary)',
                     background: isActive ? 'rgba(79,143,252,0.1)' : 'transparent',
                   }}>
                   {tab.icon}
-                  {tab.label}
+                  <span className="tab-label">{tab.label}</span>
                 </button>
               );
             })}
@@ -151,7 +179,7 @@ function App() {
 
         {/* Error */}
         {error && (
-          <div className="mx-6 mt-4 px-4 py-3 rounded-xl text-sm flex items-center gap-3 fade-in"
+          <div className="mx-8 mt-5 px-5 py-4 rounded-xl text-sm flex items-center gap-3 fade-in"
             style={{ background: 'rgba(248,113,113,0.1)', color: 'var(--color-accent-red)', border: '1px solid rgba(248,113,113,0.2)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
@@ -163,25 +191,25 @@ function App() {
         {/* Loading */}
         {loading && (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center fade-in">
-              <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="flex flex-col items-center fade-in" style={{ gap: '20px' }}>
+              <div className="relative" style={{ width: '120px', height: '120px' }}>
                 <div className="absolute inset-0 rounded-full pulse-glow"
-                  style={{ border: '3px solid rgba(79,143,252,0.2)' }}/>
+                  style={{ border: '4px solid rgba(79,143,252,0.2)' }}/>
                 <div className="absolute inset-0 rounded-full spinner"
-                  style={{ border: '3px solid transparent', borderTopColor: 'var(--color-accent-blue)' }}/>
-                <div className="absolute inset-3 rounded-full spinner"
-                  style={{ border: '2px solid transparent', borderTopColor: 'var(--color-accent-purple)', animationDirection: 'reverse', animationDuration: '1.5s' }}/>
+                  style={{ border: '4px solid transparent', borderTopColor: 'var(--color-accent-blue)' }}/>
+                <div className="absolute rounded-full spinner"
+                  style={{ inset: '12px', border: '3px solid transparent', borderTopColor: 'var(--color-accent-purple)', animationDirection: 'reverse', animationDuration: '1.5s' }}/>
               </div>
               <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Выполнение эксперимента...</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Это может занять некоторое время</p>
+              <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Это может занять некоторое время</p>
             </div>
           </div>
         )}
 
         {/* Content */}
         {!loading && (
-          <main className="flex-1 overflow-auto p-6">
-            <div className="fade-in">{renderTab()}</div>
+          <main className="flex-1 overflow-auto" style={{ padding: '30px' }}>
+            <div className={`fade-in max-w-[1600px]${!results ? ' h-full' : ''}`}>{renderTab()}</div>
           </main>
         )}
       </div>

@@ -38,13 +38,13 @@ function ComparisonTab({ results }) {
   const medalColors = ['#fbbf24', '#94a3b8', '#cd7f32'];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title"><h2>Сравнение алгоритмов</h2></div>
 
       {/* Podium */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 fade-in">
+      <div className="grid grid-cols-1 md:grid-cols-3 fade-in" style={{ gap: '30px' }}>
         {ranking.slice(0, 3).map((r, i) => (
-          <div key={r.algorithm} className="glass-card p-5 text-center relative overflow-hidden">
+          <div key={r.algorithm} className="glass-card text-center relative overflow-hidden" style={{ padding: '20px' }}>
             <div className="absolute top-0 left-0 right-0 h-1" style={{ background: medalColors[i] }}/>
             <div className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center text-lg font-bold"
               style={{ background: `${medalColors[i]}20`, color: medalColors[i] }}>
@@ -61,8 +61,8 @@ function ComparisonTab({ results }) {
 
       {/* Radar */}
       {radarData.length > 0 && (
-        <div className="glass-card p-5 fade-in-delay-1">
-          <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="glass-card fade-in-delay-1" style={{ padding: '20px' }}>
+          <h3 className="font-semibold mb-5" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Радарная диаграмма метрик
           </h3>
           <ResponsiveContainer width="100%" height={400}>
@@ -83,8 +83,8 @@ function ComparisonTab({ results }) {
 
       {/* Ranking table */}
       <div className="glass-card overflow-hidden fade-in-delay-2">
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-6 flex items-center justify-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Детальный рейтинг
           </h3>
         </div>
@@ -139,11 +139,11 @@ function ComparisonTab({ results }) {
       </div>
 
       {/* Score bars */}
-      <div className="glass-card p-5 fade-in-delay-3">
-        <h3 className="text-sm font-semibold mb-5" style={{ color: 'var(--color-text-primary)' }}>
+      <div className="glass-card fade-in-delay-3" style={{ padding: '20px' }}>
+        <h3 className="font-semibold mb-6" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
           Визуальное сравнение
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-5">
           {ranking.map((r, i) => (
             <div key={r.algorithm} className="flex items-center gap-4">
               <span className="text-sm font-semibold w-28 shrink-0" style={{ color: 'var(--color-text-primary)' }}>

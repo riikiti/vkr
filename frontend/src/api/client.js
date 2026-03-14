@@ -15,7 +15,12 @@ export const getConfig = () => client.get('/config');
 export const runExperiment = (params) => client.post('/experiments/run', params);
 
 export const generateReport = (format, results) =>
-  client.post('/reports/generate', { format, results }, {
+  client.post('/reports/generate', {
+    format,
+    entropy_results: results.entropy_results || [],
+    avalanche_results: results.avalanche_results || [],
+    distribution_results: results.distribution_results || [],
+  }, {
     responseType: 'blob',
   });
 

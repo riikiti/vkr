@@ -1,5 +1,28 @@
+import warnings
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
+
+
+def _safe_pearson(x, y):
+    """Pearson correlation, возвращает 0.0 при постоянном массиве."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            r, _ = pearsonr(x, y)
+            return 0.0 if np.isnan(r) else float(r)
+        except Exception:
+            return 0.0
+
+
+def _safe_spearman(x, y):
+    """Spearman correlation, возвращает 0.0 при постоянном массиве."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            r, _ = spearmanr(x, y)
+            return 0.0 if np.isnan(r) else float(r)
+        except Exception:
+            return 0.0
 
 
 def calculate_autocorrelation(data: bytes, lag: int = 1) -> float:
@@ -12,8 +35,7 @@ def calculate_autocorrelation(data: bytes, lag: int = 1) -> float:
     y = arr[lag:]
     if len(x) < 2:
         return 0.0
-    corr, _ = pearsonr(x, y)
-    return float(corr)
+    return _safe_pearson(x, y)
 
 
 def calculate_plaintext_ciphertext_correlation(
@@ -23,6 +45,7 @@ def calculate_plaintext_ciphertext_correlation(
     """
     Корреляция Пирсона и Спирмена между открытым и зашифрованным текстом.
     Для идеального шифра оба значения ≈ 0.
+    При постоянных данных (напр. все нули) возвращает 0.0.
     """
     min_len = min(len(plaintext), len(ciphertext))
     if min_len < 2:
@@ -31,12 +54,9 @@ def calculate_plaintext_ciphertext_correlation(
     x = np.frombuffer(plaintext[:min_len], dtype=np.uint8).astype(float)
     y = np.frombuffer(ciphertext[:min_len], dtype=np.uint8).astype(float)
 
-    pearson_r, _ = pearsonr(x, y)
-    spearman_r, _ = spearmanr(x, y)
-
     return {
-        "pearson": float(pearson_r),
-        "spearman": float(spearman_r),
+        "pearson": _safe_pearson(x, y),
+        "spearman": _safe_spearman(x, y),
     }
 
 

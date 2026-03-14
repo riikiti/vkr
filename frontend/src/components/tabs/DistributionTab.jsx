@@ -9,6 +9,16 @@ const SIZE_LABELS = {
   1048576: '1 MB',
 };
 
+const DATA_TYPE_LABELS = {
+  text: 'Текст',
+  binary: 'Паттерн',
+  random: 'Случайные',
+  image: 'Изображение',
+  zeros: 'Нули',
+  structured: 'JSON',
+  incremental: 'Счётчик',
+};
+
 const COLORS = ['#4f8ffc', '#34d399', '#fbbf24', '#f87171', '#a78bfa'];
 
 function DistributionTab({ results }) {
@@ -38,13 +48,13 @@ function DistributionTab({ results }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title"><h2>Статистическое распределение</h2></div>
 
       {/* Correlation Chart */}
       {corrChartData.length > 0 && (
-        <div className="glass-card p-5 fade-in">
-          <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="glass-card fade-in" style={{ padding: '20px' }}>
+          <h3 className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Средняя корреляция (|r|) по алгоритмам
           </h3>
           <p className="text-[11px] mb-4" style={{ color: 'var(--color-text-muted)' }}>
@@ -65,11 +75,11 @@ function DistributionTab({ results }) {
 
       {/* Statistical Metrics */}
       <div className="glass-card overflow-hidden fade-in-delay-1">
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-6 flex flex-col items-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Статистические моменты распределения
           </h3>
-          <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
             Идеал для равномерного [0, 255]: среднее = 127.5, дисперсия = 5461.25, асимм. = 0, эксцесс = -1.2
           </p>
         </div>
@@ -90,7 +100,7 @@ function DistributionTab({ results }) {
               {distribution_results.map((r, i) => (
                 <tr key={i}>
                   <td className="font-semibold">{r.algorithm}</td>
-                  <td>{r.data_type}</td>
+                  <td>{DATA_TYPE_LABELS[r.data_type] || r.data_type}</td>
                   <td>{SIZE_LABELS[r.data_size] || r.data_size}</td>
                   <td className="font-mono text-xs">
                     <span style={{ color: Math.abs((r.dist_mean || 0) - 127.5) < 5 ? 'var(--color-accent-green)' : 'var(--color-text-primary)' }}>
@@ -113,11 +123,11 @@ function DistributionTab({ results }) {
 
       {/* Chi-square */}
       <div className="glass-card overflow-hidden fade-in-delay-2">
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-6 flex flex-col items-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Тест хи-квадрат на равномерность
           </h3>
-          <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
             p-значение &gt; 0.05 — распределение считается равномерным
           </p>
         </div>
@@ -137,7 +147,7 @@ function DistributionTab({ results }) {
               {distribution_results.map((r, i) => (
                 <tr key={i}>
                   <td className="font-semibold">{r.algorithm}</td>
-                  <td>{r.data_type}</td>
+                  <td>{DATA_TYPE_LABELS[r.data_type] || r.data_type}</td>
                   <td>{SIZE_LABELS[r.data_size] || r.data_size}</td>
                   <td className="font-mono text-xs">{r.freq_chi2_stat?.toFixed(2)}</td>
                   <td className="font-mono text-xs">{r.freq_p_value?.toFixed(4)}</td>
@@ -157,8 +167,8 @@ function DistributionTab({ results }) {
 
       {/* Correlation */}
       <div className="glass-card overflow-hidden fade-in-delay-3">
-        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-6 flex items-center justify-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Корреляционные метрики
           </h3>
         </div>
@@ -179,7 +189,7 @@ function DistributionTab({ results }) {
               {distribution_results.map((r, i) => (
                 <tr key={i}>
                   <td className="font-semibold">{r.algorithm}</td>
-                  <td>{r.data_type}</td>
+                  <td>{DATA_TYPE_LABELS[r.data_type] || r.data_type}</td>
                   <td>{SIZE_LABELS[r.data_size] || r.data_size}</td>
                   <td className="font-mono text-xs">
                     <span style={{ color: Math.abs(r.corr_pearson || 0) < 0.05 ? 'var(--color-accent-green)' : 'var(--color-text-primary)' }}>

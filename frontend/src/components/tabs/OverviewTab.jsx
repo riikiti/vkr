@@ -1,7 +1,7 @@
 function MetricCard({ title, value, subtitle, colorClass, icon }) {
   return (
-    <div className={`${colorClass} rounded-2xl p-5 transition-all duration-300 fade-in`}>
-      <div className="flex items-start justify-between mb-3">
+    <div className={`${colorClass} rounded-2xl transition-all duration-300 fade-in`} style={{ padding: '20px' }}>
+      <div className="flex items-start justify-between mb-4">
         <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
           {title}
         </p>
@@ -43,12 +43,12 @@ function OverviewTab({ results }) {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title">
         <h2>Обзор результатов</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4" style={{ gap: '30px' }}>
         <MetricCard title="Лучший алгоритм" value={bestAlgorithm}
           subtitle={bestScore ? `Комплексная оценка: ${bestScore}` : ''}
           colorClass="metric-card-green"
@@ -72,13 +72,10 @@ function OverviewTab({ results }) {
       </div>
 
       <div className="glass-card overflow-hidden fade-in-delay-1">
-        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="px-6 flex items-center justify-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
+          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Сводка по алгоритмам
           </h3>
-          <span className="text-[11px] font-medium" style={{ color: 'var(--color-text-muted)' }}>
-            {ranking.length} алгоритмов
-          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">
