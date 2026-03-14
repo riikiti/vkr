@@ -99,16 +99,16 @@ function EntropyTab({ results }) {
             Энтропия vs размер данных
           </h3>
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+            <LineChart data={lineData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false}/>
               <XAxis dataKey="size" tick={{ fontSize: 12 }}/>
-              <YAxis domain={[7, 8.1]} tick={{ fontSize: 11 }}/>
+              <YAxis domain={['auto', 'auto']} tick={{ fontSize: 11 }} tickFormatter={(v) => v.toFixed(2)}/>
               <Tooltip contentStyle={tooltipStyle}/>
               <Legend/>
               {algorithms.map((alg, i) => (
-                <Line key={alg} type="monotone" dataKey={alg} stroke={COLORS[i % COLORS.length]}
+                <Line key={alg} type="linear" dataKey={alg} stroke={COLORS[i % COLORS.length]}
                   strokeWidth={2.5} dot={{ r: 4, fill: COLORS[i % COLORS.length] }}
-                  activeDot={{ r: 6, strokeWidth: 2 }} name={alg}/>
+                  activeDot={{ r: 6, strokeWidth: 2 }} name={alg} connectNulls/>
               ))}
             </LineChart>
           </ResponsiveContainer>
