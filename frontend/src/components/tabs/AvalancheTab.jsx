@@ -2,6 +2,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ReferenceLine, ErrorBar, Cell,
 } from 'recharts';
+import { AvalancheInfo } from '../InfoModal';
+import { AvalancheCoefficientInfo } from '../MetricInfo';
 
 const COLORS = ['#4f8ffc', '#34d399', '#fbbf24', '#f87171', '#a78bfa'];
 
@@ -44,7 +46,7 @@ function AvalancheTab({ results }) {
 
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
-      <div className="section-title"><h2>Лавинный эффект</h2></div>
+      <div className="section-title"><h2>Лавинный эффект</h2><AvalancheInfo /></div>
 
       <div className="rounded-xl flex items-start gap-4 fade-in"
         style={{ padding: '20px', background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.15)' }}>
@@ -63,8 +65,9 @@ function AvalancheTab({ results }) {
       </div>
 
       <div className="glass-card fade-in-delay-1" style={{ padding: '20px' }}>
-        <h3 className="font-semibold mb-5" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+        <h3 className="font-semibold mb-5 flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
           Коэффициент лавинного эффекта
+          <AvalancheCoefficientInfo />
         </h3>
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: -10, bottom: 5 }}>

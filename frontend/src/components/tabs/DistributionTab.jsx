@@ -1,6 +1,8 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
+import { DistributionInfo } from '../InfoModal';
+import { ChiSquareInfo, CorrelationInfo, FrequencyDistributionInfo } from '../MetricInfo';
 
 const SIZE_LABELS = {
   1024: '1 KB',
@@ -49,13 +51,14 @@ function DistributionTab({ results }) {
 
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
-      <div className="section-title"><h2>Статистическое распределение</h2></div>
+      <div className="section-title"><h2>Статистическое распределение</h2><DistributionInfo /></div>
 
       {/* Correlation Chart */}
       {corrChartData.length > 0 && (
         <div className="glass-card fade-in" style={{ padding: '20px' }}>
-          <h3 className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+          <h3 className="font-semibold mb-1 flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Средняя корреляция (|r|) по алгоритмам
+            <CorrelationInfo />
           </h3>
           <p className="text-[11px] mb-4" style={{ color: 'var(--color-text-muted)' }}>
             Чем ближе к 0, тем лучше — нет зависимости между открытым и шифротекстом
@@ -76,8 +79,9 @@ function DistributionTab({ results }) {
       {/* Statistical Metrics */}
       <div className="glass-card overflow-hidden fade-in-delay-1">
         <div className="px-6 flex flex-col items-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
-          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+          <h3 className="font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
             Статистические моменты распределения
+            <FrequencyDistributionInfo />
           </h3>
           <p className="text-[11px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
             Идеал для равномерного [0, 255]: среднее = 127.5, дисперсия = 5461.25, асимм. = 0, эксцесс = -1.2
@@ -124,8 +128,8 @@ function DistributionTab({ results }) {
       {/* Chi-square */}
       <div className="glass-card overflow-hidden fade-in-delay-2">
         <div className="px-6 flex flex-col items-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
-          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
-            Тест хи-квадрат на равномерность
+          <h3 className="font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+            Тест хи-квадрат на равномерность <ChiSquareInfo />
           </h3>
           <p className="text-[11px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
             p-значение &gt; 0.05 — распределение считается равномерным

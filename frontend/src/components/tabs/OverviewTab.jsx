@@ -1,3 +1,5 @@
+import { OverviewInfo } from '../InfoModal';
+
 function MetricCard({ title, value, subtitle, colorClass, icon }) {
   return (
     <div className={`${colorClass} rounded-2xl transition-all duration-300 fade-in`} style={{ padding: '20px' }}>
@@ -46,6 +48,7 @@ function OverviewTab({ results }) {
     <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="section-title">
         <h2>Обзор результатов</h2>
+        <OverviewInfo />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4" style={{ gap: '30px' }}>

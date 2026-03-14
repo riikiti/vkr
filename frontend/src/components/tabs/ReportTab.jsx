@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { generateReport } from '../../api/client';
+import { ReportInfo } from '../InfoModal';
 
 function ReportTab({ results }) {
   const [downloading, setDownloading] = useState(null);
@@ -347,7 +348,7 @@ function ReportTab({ results }) {
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
       <div className="report-header">
-        <div className="section-title flex-1"><h2>Отчёт</h2></div>
+        <div className="section-title flex-1"><h2>Отчёт</h2><ReportInfo /></div>
         <div className="report-download-btns">
           {downloadBtns.map(({ format, label, ext, color }) => (
             <button key={format}

@@ -2,6 +2,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, ReferenceLine,
 } from 'recharts';
+import { EntropyInfo } from '../InfoModal';
+import { ShannonEntropyInfo, KLDivergenceInfo, MutualInformationInfo } from '../MetricInfo';
 
 const COLORS = ['#4f8ffc', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#fb923c'];
 
@@ -60,13 +62,14 @@ function EntropyTab({ results }) {
 
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
-      <div className="section-title"><h2>Анализ энтропии</h2></div>
+      <div className="section-title"><h2>Анализ энтропии</h2><EntropyInfo /></div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2" style={{ gap: '30px' }}>
         <div className="glass-card fade-in" style={{ padding: '20px' }}>
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+            <h3 className="font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
               Энтропия Шеннона по алгоритмам
+              <ShannonEntropyInfo />
             </h3>
             <span className="text-[10px] px-2 py-1 rounded-md font-medium"
               style={{ background: 'rgba(79,143,252,0.1)', color: 'var(--color-accent-blue)' }}>
@@ -114,7 +117,7 @@ function EntropyTab({ results }) {
 
       <div className="glass-card overflow-hidden fade-in-delay-2">
         <div className="px-6 flex items-center justify-center" style={{ borderBottom: '1px solid var(--color-border)', paddingTop: '20px', paddingBottom: '20px' }}>
-          <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>Подробные метрики</h3>
+          <h3 className="font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>Подробные метрики <KLDivergenceInfo /> <MutualInformationInfo /></h3>
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">

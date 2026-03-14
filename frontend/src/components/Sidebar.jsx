@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AlgorithmInfoButton } from './AlgorithmInfo';
 
 const SIZE_LABELS = {
   1024: '1 KB',
@@ -279,6 +280,7 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
                   <span className="w-1.5 h-1.5 rounded-full inline-block mr-1.5"
                     style={{ background: active ? info.color : 'var(--color-text-muted)' }}/>
                   {alg}
+                  <AlgorithmInfoButton algorithm={alg} />
                 </button>
               );
             })}

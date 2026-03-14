@@ -1,6 +1,7 @@
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend,
 } from 'recharts';
+import { ComparisonInfo } from '../InfoModal';
 
 const COLORS = ['#4f8ffc', '#34d399', '#fbbf24', '#f87171', '#a78bfa'];
 
@@ -39,7 +40,7 @@ function ComparisonTab({ results }) {
 
   return (
     <div className="flex flex-col" style={{ gap: '30px' }}>
-      <div className="section-title"><h2>Сравнение алгоритмов</h2></div>
+      <div className="section-title"><h2>Сравнение алгоритмов</h2><ComparisonInfo /></div>
 
       {/* Podium */}
       <div className="grid grid-cols-1 md:grid-cols-3 fade-in" style={{ gap: '30px' }}>
