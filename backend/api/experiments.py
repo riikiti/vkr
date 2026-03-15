@@ -5,6 +5,7 @@ import sys
 import os
 import time
 import traceback
+import base64
 
 import numpy as np
 import pandas as pd
@@ -106,9 +107,22 @@ def run_experiments(request: ExperimentRequest):
                     detail=f"Unknown data type: {dt}. Available: {valid_data_types}",
                 )
 
+        # Decode custom data if provided
+        custom_bytes = None
+        if request.custom_data:
+            try:
+                custom_bytes = base64.b64decode(request.custom_data)
+            except Exception:
+                raise HTTPException(status_code=400, detail="Invalid base64 in custom_data")
+
         entropy_records = []
         distribution_records = []
         avalanche_records = []
+
+        # When custom data is provided, use actual data size
+        data_sizes = request.data_sizes
+        if custom_bytes is not None:
+            data_sizes = [len(custom_bytes)]
 
         # --- Entropy & Distribution experiments ---
         for algo_name in request.algorithms:
@@ -117,8 +131,8 @@ def run_experiments(request: ExperimentRequest):
             key = cipher.generate_key()
 
             for data_type in request.data_types:
-                for size in request.data_sizes:
-                    plaintext = generate_data(data_type, size)
+                for size in data_sizes:
+                    plaintext = custom_bytes if custom_bytes is not None else generate_data(data_type, size)
                     ciphertext, enc_time = cipher.encrypt_timed(plaintext, key)
 
                     # Entropy metrics
@@ -146,8 +160,8 @@ def run_experiments(request: ExperimentRequest):
             cipher = get_cipher(algo_upper)
             key = cipher.generate_key()
 
-            for size in request.data_sizes:
-                data = generate_random_data(size)
+            for size in data_sizes:
+                data = custom_bytes if custom_bytes is not None else generate_random_data(size)
                 result = run_avalanche_test(
                     cipher, data, key,
                     n_tests=request.avalanche_iterations,
@@ -259,6 +273,14 @@ def run_trace(request: TraceRequest):
         # Cap trace size to keep hex output readable
         trace_size = min(request.data_size, 1024)
 
+        # Decode custom data if provided
+        custom_bytes = None
+        if request.custom_data:
+            try:
+                custom_bytes = base64.b64decode(request.custom_data)
+            except Exception:
+                raise HTTPException(status_code=400, detail="Invalid base64 in custom_data")
+
         traces = []
 
         for algo_name in request.algorithms:
@@ -274,8 +296,9 @@ def run_trace(request: TraceRequest):
             key_size = getattr(cipher, "KEY_SIZE", 16)
 
             for data_type in request.data_types:
-                plaintext = generate_data(data_type, trace_size)
-                data_label = DATA_TYPE_LABELS.get(data_type, data_type)
+                plaintext = custom_bytes if custom_bytes is not None else generate_data(data_type, trace_size)
+                data_label = ("Пользовательские данные" if custom_bytes is not None
+                              else DATA_TYPE_LABELS.get(data_type, data_type))
 
                 steps = []
 
@@ -397,11 +420,16 @@ def run_trace(request: TraceRequest):
                     "match": match,
                 })
 
+                # Build visual preview data
+                plain_b64 = base64.b64encode(plaintext).decode("ascii")
+                cipher_b64 = base64.b64encode(ciphertext).decode("ascii")
+                decrypted_b64 = base64.b64encode(decrypted).decode("ascii") if match else None
+
                 traces.append({
                     "algorithm": algo_upper,
                     "data_type": data_type,
                     "data_type_label": data_label,
-                    "data_size": trace_size,
+                    "data_size": len(plaintext),
                     "key_hex": _bytes_to_hex_preview(key, 128),
                     "key_size_bits": key_size * 8,
                     "is_stream": is_stream,
@@ -410,11 +438,16 @@ def run_trace(request: TraceRequest):
                     "steps": steps,
                     "entropy_plain": round(calculate_shannon_entropy(plaintext), 4),
                     "entropy_cipher": round(calculate_shannon_entropy(ciphertext), 4),
+                    "plaintext_b64": plain_b64,
+                    "ciphertext_b64": cipher_b64,
+                    "decrypted_b64": decrypted_b64,
                 })
 
+        actual_size = len(custom_bytes) if custom_bytes is not None else trace_size
         return {
             "data_types": request.data_types,
-            "data_size": trace_size,
+            "data_size": actual_size,
+            "is_custom": custom_bytes is not None,
             "traces": traces,
         }
 

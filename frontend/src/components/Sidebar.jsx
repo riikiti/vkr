@@ -115,11 +115,54 @@ const TEST_CASES = [
   },
 ];
 
+const CUSTOM_VALIDATORS = {
+  text: (data) => {
+    try {
+      new TextDecoder('utf-8', { fatal: true }).decode(
+        typeof data === 'string' ? new TextEncoder().encode(data) : data
+      );
+      return null;
+    } catch {
+      return 'Данные не являются валидным UTF-8 текстом';
+    }
+  },
+  structured: (data) => {
+    try {
+      const text = typeof data === 'string' ? data : new TextDecoder().decode(data);
+      JSON.parse(text);
+      return null;
+    } catch {
+      return 'Данные не являются валидным JSON';
+    }
+  },
+  image: (data) => {
+    const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data);
+    if (bytes.length < 4) return 'Файл слишком маленький для изображения';
+    const png = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
+    const jpg = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+    const bmp = bytes[0] === 0x42 && bytes[1] === 0x4D;
+    const gif = bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46;
+    if (!png && !jpg && !bmp && !gif) return 'Файл не является изображением (поддерживаются PNG, JPEG, BMP, GIF)';
+    return null;
+  },
+  zeros: (data) => {
+    const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data);
+    const allZeros = bytes.every(b => b === 0);
+    if (!allZeros) return 'Данные должны состоять только из нулевых байтов';
+    return null;
+  },
+};
+
 function Sidebar({ config, onRun, loading, isOpen, onClose }) {
   const [algorithms, setAlgorithms] = useState([]);
   const [dataTypes, setDataTypes] = useState([]);
   const [dataSizes, setDataSizes] = useState([]);
   const [avalancheIterations, setAvalancheIterations] = useState(100);
+  const [customMode, setCustomMode] = useState(false);
+  const [customText, setCustomText] = useState('');
+  const [customFile, setCustomFile] = useState(null);
+  const [customFileBytes, setCustomFileBytes] = useState(null);
+  const [customError, setCustomError] = useState(null);
 
   const availableAlgorithms = config?.algorithms || ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20'];
   const availableDataTypes = config?.data_types || ['text', 'binary', 'random', 'image'];
@@ -148,18 +191,84 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
     }
   };
 
+  const validateCustomData = () => {
+    if (!customMode) return true;
+
+    const hasTextInput = customText.trim().length > 0;
+    const hasFileInput = customFileBytes !== null;
+
+    if (!hasTextInput && !hasFileInput) {
+      setCustomError('Введите данные или загрузите файл');
+      return false;
+    }
+
+    if (dataTypes.length !== 1) {
+      setCustomError('При загрузке своих данных выберите один тип данных');
+      return false;
+    }
+
+    const selectedType = dataTypes[0];
+    const validator = CUSTOM_VALIDATORS[selectedType];
+
+    if (validator) {
+      const rawData = hasFileInput ? customFileBytes : customText;
+      const error = validator(rawData);
+      if (error) {
+        setCustomError(error);
+        return false;
+      }
+    }
+
+    setCustomError(null);
+    return true;
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setCustomFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setCustomFileBytes(new Uint8Array(ev.target.result));
+      setCustomError(null);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const getCustomDataBase64 = () => {
+    if (customFileBytes) {
+      let binary = '';
+      for (let i = 0; i < customFileBytes.length; i++) {
+        binary += String.fromCharCode(customFileBytes[i]);
+      }
+      return btoa(binary);
+    }
+    return btoa(unescape(encodeURIComponent(customText)));
+  };
+
   const handleRun = () => {
-    if (algorithms.length === 0 || dataTypes.length === 0 || dataSizes.length === 0) return;
-    onRun({
+    if (algorithms.length === 0 || dataTypes.length === 0) return;
+    if (!customMode && dataSizes.length === 0) return;
+    if (!validateCustomData()) return;
+
+    const params = {
       algorithms,
       data_types: dataTypes,
-      data_sizes: dataSizes,
+      data_sizes: customMode ? [0] : dataSizes,
       avalanche_iterations: avalancheIterations,
-    });
+    };
+
+    if (customMode) {
+      params.custom_data = getCustomDataBase64();
+    }
+
+    onRun(params);
   };
 
   const handleTestCase = (tc) => {
     if (loading) return;
+    setCustomMode(false);
+    setCustomError(null);
     setAlgorithms(tc.params.algorithms);
     setDataTypes(tc.params.data_types);
     setDataSizes(tc.params.data_sizes);
@@ -294,18 +403,64 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
             <h3 className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
               Типы данных
             </h3>
-            <button onClick={() => selectAll(availableDataTypes, dataTypes, setDataTypes)}
-              className="text-[10px] font-medium cursor-pointer hover:underline"
-              style={{ color: 'var(--color-accent-blue)', background: 'none', border: 'none' }}>
-              {dataTypes.length === availableDataTypes.length ? 'Снять все' : 'Выбрать все'}
-            </button>
+            {!customMode && (
+              <button onClick={() => selectAll(availableDataTypes, dataTypes, setDataTypes)}
+                className="text-[10px] font-medium cursor-pointer hover:underline"
+                style={{ color: 'var(--color-accent-blue)', background: 'none', border: 'none' }}>
+                {dataTypes.length === availableDataTypes.length ? 'Снять все' : 'Выбрать все'}
+              </button>
+            )}
           </div>
+
+          {/* Radio: Генерация / Свои данные */}
+          <div className="flex gap-2 mb-3">
+            {[
+              { value: false, label: 'Генерация' },
+              { value: true, label: 'Свои данные' },
+            ].map((opt) => (
+              <button key={String(opt.value)}
+                onClick={() => {
+                  setCustomMode(opt.value);
+                  setCustomError(null);
+                  if (opt.value && dataTypes.length > 1) setDataTypes([dataTypes[0]]);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 cursor-pointer"
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  transition: 'all 0.2s ease',
+                  background: customMode === opt.value ? 'rgba(79,143,252,0.15)' : 'rgba(26,32,53,0.6)',
+                  border: `1px solid ${customMode === opt.value ? 'rgba(79,143,252,0.4)' : 'var(--color-border)'}`,
+                  color: customMode === opt.value ? 'var(--color-accent-blue)' : 'var(--color-text-secondary)',
+                }}>
+                <span className="flex items-center justify-center w-3.5 h-3.5 rounded-full"
+                  style={{
+                    border: `2px solid ${customMode === opt.value ? 'var(--color-accent-blue)' : 'var(--color-text-muted)'}`,
+                  }}>
+                  {customMode === opt.value && (
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-accent-blue)' }}/>
+                  )}
+                </span>
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
           <div className="flex flex-wrap gap-2">
             {availableDataTypes.map((dt) => {
               const active = dataTypes.includes(dt);
               return (
                 <button key={dt}
-                  onClick={() => toggleItem(dataTypes, setDataTypes, dt)}
+                  onClick={() => {
+                    if (customMode) {
+                      setDataTypes([dt]);
+                      setCustomError(null);
+                    } else {
+                      toggleItem(dataTypes, setDataTypes, dt);
+                    }
+                  }}
                   className="cursor-pointer"
                   style={active ? {
                     background: 'rgba(34,211,238,0.12)',
@@ -331,9 +486,83 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
               );
             })}
           </div>
+
+          {/* Custom data input */}
+          {customMode && (
+            <div className="mt-3 flex flex-col gap-2">
+              {dataTypes[0] && !['image'].includes(dataTypes[0]) ? (
+                <textarea
+                  value={customText}
+                  onChange={(e) => { setCustomText(e.target.value); setCustomError(null); }}
+                  placeholder={
+                    dataTypes[0] === 'structured'
+                      ? '{"key": "value", "data": [1, 2, 3]}'
+                      : dataTypes[0] === 'text'
+                      ? 'Введите текст для анализа...'
+                      : 'Введите данные...'
+                  }
+                  rows={4}
+                  style={{
+                    background: 'rgba(26,32,53,0.8)',
+                    border: `1px solid ${customError ? 'rgba(248,113,113,0.5)' : 'var(--color-border)'}`,
+                    borderRadius: '8px',
+                    padding: '10px 12px',
+                    fontSize: '0.8125rem',
+                    color: 'var(--color-text-primary)',
+                    resize: 'vertical',
+                    fontFamily: dataTypes[0] === 'structured' ? 'monospace' : 'inherit',
+                  }}
+                />
+              ) : null}
+
+              <label className="flex items-center gap-2 cursor-pointer"
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: '8px',
+                  background: 'rgba(26,32,53,0.8)',
+                  border: '1px solid var(--color-border)',
+                  fontSize: '0.75rem',
+                  color: 'var(--color-text-secondary)',
+                }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                {customFile ? customFile.name : 'Загрузить файл'}
+                <input type="file" className="hidden" onChange={handleFileUpload} />
+              </label>
+
+              {customFile && (
+                <div className="flex items-center justify-between" style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
+                  <span>{(customFile.size / 1024).toFixed(1)} KB</span>
+                  <button onClick={() => { setCustomFile(null); setCustomFileBytes(null); setCustomError(null); }}
+                    className="cursor-pointer hover:underline"
+                    style={{ color: 'var(--color-accent-red)', background: 'none', border: 'none', fontSize: '0.7rem' }}>
+                    Удалить
+                  </button>
+                </div>
+              )}
+
+              {customError && (
+                <div className="flex items-center gap-2" style={{
+                  padding: '8px 10px',
+                  borderRadius: '8px',
+                  background: 'rgba(248,113,113,0.1)',
+                  border: '1px solid rgba(248,113,113,0.25)',
+                  fontSize: '0.7rem',
+                  color: 'var(--color-accent-red)',
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  {customError}
+                </div>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Data Sizes */}
+        {!customMode && (
         <section>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
@@ -377,6 +606,7 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
             })}
           </div>
         </section>
+        )}
 
         {/* Avalanche Iterations */}
         <section>
@@ -399,9 +629,19 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
         {/* Experiment info */}
         <div className="rounded-xl p-4" style={{ background: 'rgba(79,143,252,0.06)', border: '1px solid rgba(79,143,252,0.12)' }}>
           <p className="text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
-            Будет выполнено <span className="font-semibold" style={{ color: 'var(--color-accent-blue)' }}>
-              {Math.max(1, algorithms.length * dataTypes.length * dataSizes.length)}
-            </span> комбинаций
+            {customMode ? (
+              <>
+                Анализ своих данных по <span className="font-semibold" style={{ color: 'var(--color-accent-blue)' }}>
+                  {algorithms.length}
+                </span> алгоритм{algorithms.length === 1 ? 'у' : 'ам'}
+              </>
+            ) : (
+              <>
+                Будет выполнено <span className="font-semibold" style={{ color: 'var(--color-accent-blue)' }}>
+                  {Math.max(1, algorithms.length * dataTypes.length * dataSizes.length)}
+                </span> комбинаций
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -409,7 +649,7 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
       {/* Run Button */}
       <div className="px-6 py-5 shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
         <button onClick={handleRun}
-          disabled={loading || algorithms.length === 0 || dataTypes.length === 0 || dataSizes.length === 0}
+          disabled={loading || algorithms.length === 0 || dataTypes.length === 0 || (!customMode && dataSizes.length === 0)}
           className="btn-gradient w-full rounded-xl font-semibold text-sm cursor-pointer flex items-center justify-center gap-2" style={{ padding: '16px' }}>
           {loading ? (
             <>

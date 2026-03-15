@@ -79,13 +79,16 @@ function App() {
     try {
       // Run experiment and trace in parallel
       const traceSize = Math.min(...(params.data_sizes || [1024]), 1024);
+      const traceParams = {
+        algorithms: params.algorithms,
+        data_types: params.data_types,
+        data_size: traceSize,
+      };
+      if (params.custom_data) traceParams.custom_data = params.custom_data;
+
       const [expRes, traceRes] = await Promise.all([
         runExperiment(params),
-        runTrace({
-          algorithms: params.algorithms,
-          data_types: params.data_types,
-          data_size: traceSize,
-        }).catch(() => null), // trace failure shouldn't block the experiment
+        runTrace(traceParams).catch(() => null), // trace failure shouldn't block the experiment
       ]);
       setResults(expRes.data);
       if (traceRes) setTraceData(traceRes.data);

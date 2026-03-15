@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Any
+from typing import Any, Optional
 
 
 class ExperimentRequest(BaseModel):
@@ -16,6 +16,10 @@ class ExperimentRequest(BaseModel):
     avalanche_iterations: int = Field(
         default=100,
         description="Number of iterations for the avalanche effect test"
+    )
+    custom_data: Optional[str] = Field(
+        default=None,
+        description="Base64-encoded custom data to use instead of generated data"
     )
 
 
@@ -88,6 +92,10 @@ class TraceRequest(BaseModel):
     data_size: int = Field(
         default=256,
         description="Size of generated data in bytes (kept small for readable hex output)"
+    )
+    custom_data: Optional[str] = Field(
+        default=None,
+        description="Base64-encoded custom data to use instead of generated data"
     )
 
 
