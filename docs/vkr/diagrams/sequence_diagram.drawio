@@ -1,0 +1,275 @@
+<mxfile host="app.diagrams.net" modified="2026-03-21T00:00:00.000Z" agent="Claude Diagram Architect" version="24.0.0" type="device">
+  <diagram id="seq-crypto-analyzer" name="CryptoAnalyzer Sequence Diagram">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ============================================================ -->
+        <!-- LIFELINE HEADERS (light blue rectangles)                     -->
+        <!-- ============================================================ -->
+        <mxCell id="lh-user" value="Пользователь" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-frontend" value="Клиент&#xa;(React)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="210" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-nginx" value="Nginx" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-backend" value="Сервер&#xa;(FastAPI)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="560" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-datagen" value="Генератор&#xa;данных" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="740" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-cipher" value="Шифр&#xa;(Encryption)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="920" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-entropy" value="Анализатор&#xa;энтропии" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-stat" value="Стат.&#xa;анализатор" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-avalanche" value="Лавинный&#xa;тест" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lh-analytics" value="Аналитика" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=40;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="40" width="100" height="1210" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- MESSAGE 1: User -> Frontend: Configure parameters            -->
+        <!-- ============================================================ -->
+        <mxCell id="msg-01" value="1: Настройка параметров" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="110" as="sourcePoint"/>
+            <mxPoint x="260" y="110" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 2: Frontend -> Nginx: POST /api/experiments/run -->
+        <mxCell id="msg-02" value="2: POST /api/experiments/run" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="150" as="sourcePoint"/>
+            <mxPoint x="430" y="150" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 3: Nginx -> Backend: Forward request -->
+        <mxCell id="msg-03" value="3: Пересылка запроса" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="190" as="sourcePoint"/>
+            <mxPoint x="610" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 4: Backend -> Backend: Validate parameters (self-message) -->
+        <mxCell id="msg-04" value="4: Валидация параметров" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;entryX=1;entryY=0;exitX=1;exitY=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="230" as="sourcePoint"/>
+            <mxPoint x="620" y="260" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="670" y="230"/>
+              <mxPoint x="670" y="260"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- LOOP FRAGMENT 1: [for each algorithm x data_type x size]     -->
+        <!-- ============================================================ -->
+        <mxCell id="loop-1" value="loop" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=20;boundedLbl=1;verticalAlign=top;align=left;spacingTop=0;spacingLeft=5;fontSize=11;fontStyle=1;fontFamily=Helvetica;fillColor=none;strokeColor=#666666;strokeWidth=1.5;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="280" width="800" height="440" as="geometry"/>
+        </mxCell>
+        <mxCell id="loop-1-label" value="[for each algorithm x data_type x size]" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=10;fontFamily=Helvetica;fontColor=#666666;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="600" y="280" width="250" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- MESSAGE 5: Backend -> DataGenerator: generate_data(type, size) -->
+        <mxCell id="msg-05" value="5: generate_data(type, size)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="320" as="sourcePoint"/>
+            <mxPoint x="790" y="320" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 6: DataGenerator -> Backend: plaintext (return) -->
+        <mxCell id="msg-06" value="6: открытый текст" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="790" y="355" as="sourcePoint"/>
+            <mxPoint x="610" y="355" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 7: Backend -> Cipher: get_cipher(algorithm) -->
+        <mxCell id="msg-07" value="7: get_cipher(algorithm)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="390" as="sourcePoint"/>
+            <mxPoint x="970" y="390" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 8: Cipher -> Backend: cipher instance (return) -->
+        <mxCell id="msg-08" value="8: экземпляр шифра" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="970" y="425" as="sourcePoint"/>
+            <mxPoint x="610" y="425" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 9: Backend -> Cipher: encrypt_timed(data, key) -->
+        <mxCell id="msg-09" value="9: encrypt_timed(data, key)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="460" as="sourcePoint"/>
+            <mxPoint x="970" y="460" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 10: Cipher -> Backend: (ciphertext, time) (return) -->
+        <mxCell id="msg-10" value="10: (шифротекст, время)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="970" y="495" as="sourcePoint"/>
+            <mxPoint x="610" y="495" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 11: Backend -> EntropyAnalyzer: analyze_all(plain, cipher) -->
+        <mxCell id="msg-11" value="11: analyze_all(plain, cipher)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="530" as="sourcePoint"/>
+            <mxPoint x="1150" y="530" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 12: EntropyAnalyzer -> Backend: entropy_results (return) -->
+        <mxCell id="msg-12" value="12: результаты энтропии" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1150" y="565" as="sourcePoint"/>
+            <mxPoint x="610" y="565" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 13: Backend -> StatAnalyzer: analyze_all_statistics(plain, cipher) -->
+        <mxCell id="msg-13" value="13: analyze_all_statistics(plain, cipher)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="600" as="sourcePoint"/>
+            <mxPoint x="1330" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 14: StatAnalyzer -> Backend: stat_results (return) -->
+        <mxCell id="msg-14" value="14: результаты статистики" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1330" y="635" as="sourcePoint"/>
+            <mxPoint x="610" y="635" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- LOOP FRAGMENT 2: [for each algorithm x size]                 -->
+        <!-- ============================================================ -->
+        <mxCell id="loop-2" value="loop" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=20;boundedLbl=1;verticalAlign=top;align=left;spacingTop=0;spacingLeft=5;fontSize=11;fontStyle=1;fontFamily=Helvetica;fillColor=none;strokeColor=#666666;strokeWidth=1.5;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="740" width="990" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="loop-2-label" value="[for each algorithm x size]" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=10;fontFamily=Helvetica;fontColor=#666666;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="600" y="740" width="200" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- MESSAGE 15: Backend -> AvalancheTest: run_avalanche_test(cipher, data, key, 100) -->
+        <mxCell id="msg-15" value="15: run_avalanche_test(cipher, data, key, 100)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="785" as="sourcePoint"/>
+            <mxPoint x="1510" y="785" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 16: AvalancheTest -> Backend: avalanche_results (return) -->
+        <mxCell id="msg-16" value="16: результаты лавинного теста" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1510" y="830" as="sourcePoint"/>
+            <mxPoint x="610" y="830" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- POST-LOOP MESSAGES: Analytics phase                          -->
+        <!-- ============================================================ -->
+
+        <!-- MESSAGE 17: Backend -> Analytics: calculate_summary(results) -->
+        <mxCell id="msg-17" value="17: calculate_summary(results)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="900" as="sourcePoint"/>
+            <mxPoint x="1690" y="900" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 18: Analytics -> Backend: summary (return) -->
+        <mxCell id="msg-18" value="18: сводка" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1690" y="935" as="sourcePoint"/>
+            <mxPoint x="610" y="935" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 19: Backend -> Analytics: rank_algorithms(summary) -->
+        <mxCell id="msg-19" value="19: rank_algorithms(summary)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="970" as="sourcePoint"/>
+            <mxPoint x="1690" y="970" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 20: Analytics -> Backend: ranking (return) -->
+        <mxCell id="msg-20" value="20: ранжирование" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1690" y="1005" as="sourcePoint"/>
+            <mxPoint x="610" y="1005" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 21: Backend -> Nginx: ExperimentResponse (JSON) (return) -->
+        <mxCell id="msg-21" value="21: ExperimentResponse (JSON)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="1060" as="sourcePoint"/>
+            <mxPoint x="430" y="1060" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 22: Nginx -> Frontend: Response (return) -->
+        <mxCell id="msg-22" value="22: Ответ" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="1100" as="sourcePoint"/>
+            <mxPoint x="260" y="1100" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGE 23: Frontend -> User: Display results (return) -->
+        <mxCell id="msg-23" value="23: Отображение результатов" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;fontSize=11;fontFamily=Helvetica;strokeColor=#999999;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="1140" as="sourcePoint"/>
+            <mxPoint x="90" y="1140" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- DIAGRAM TITLE                                                -->
+        <!-- ============================================================ -->
+        <mxCell id="title" value="CryptoAnalyzer — Диаграмма последовательности процесса эксперимента" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontStyle=1;fontFamily=Helvetica;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="600" y="5" width="500" height="30" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

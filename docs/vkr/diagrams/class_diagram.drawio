@@ -1,0 +1,173 @@
+<mxfile host="app.diagrams.net" modified="2026-03-21T00:00:00.000Z" agent="Claude Diagram Architect" version="24.0.0" type="device">
+  <diagram id="crypto-analyzer-classes" name="CryptoAnalyzer Class Diagram">
+    <mxGraphModel dx="1422" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ============================================================ -->
+        <!-- ABSTRACT BASE CLASS: BaseCipher                              -->
+        <!-- ============================================================ -->
+        <mxCell id="base-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;abstract&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;BaseCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;i&gt;+ name: str  {abstract property}&lt;/i&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;i&gt;+ generate_key(): bytes&lt;/i&gt;&lt;br/&gt;&lt;i&gt;+ encrypt(data, key): bytes&lt;/i&gt;&lt;br/&gt;&lt;i&gt;+ decrypt(data, key): bytes&lt;/i&gt;&lt;br/&gt;+ encrypt_deterministic(data, key, iv): bytes&lt;br/&gt;+ encrypt_timed(data, key): tuple&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=2;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="540" y="30" width="320" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- CONCRETE CIPHER CLASSES (Row 1: AES, DES, TripleDES)         -->
+        <!-- ============================================================ -->
+
+        <!-- AESCipher -->
+        <mxCell id="aes-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AESCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 32&lt;br/&gt;+ BLOCK_SIZE: int = 16&lt;br/&gt;+ mode = CBC&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="310" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- DESCipher -->
+        <mxCell id="des-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;DESCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 8&lt;br/&gt;+ BLOCK_SIZE: int = 8&lt;br/&gt;+ mode = CBC&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="290" y="310" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- TripleDESCipher -->
+        <mxCell id="triple-des-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;TripleDESCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 24&lt;br/&gt;+ BLOCK_SIZE: int = 8&lt;br/&gt;+ mode = CBC&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="540" y="310" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- BlowfishCipher -->
+        <mxCell id="blowfish-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;BlowfishCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 16&lt;br/&gt;+ BLOCK_SIZE: int = 8&lt;br/&gt;+ mode = CBC&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="790" y="310" width="220" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- RC4Cipher -->
+        <mxCell id="rc4-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RC4Cipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 16&lt;br/&gt;+ type = stream&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="310" width="220" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- GostCipher -->
+        <mxCell id="gost-cipher" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;GostCipher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ KEY_SIZE: int = 32&lt;br/&gt;+ BLOCK_SIZE: int = 8&lt;br/&gt;+ mode = CBC&lt;br/&gt;+ S_BOXES: list&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_key(): bytes&lt;br/&gt;+ encrypt(data, key): bytes&lt;br/&gt;+ decrypt(data, key): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="310" width="220" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- INHERITANCE ARROWS (concrete -> abstract)                    -->
+        <!-- ============================================================ -->
+        <mxCell id="edge-aes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="aes-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-des" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="des-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-3des" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="triple-des-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-blowfish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="blowfish-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-rc4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="rc4-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-gost" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=14;strokeWidth=1.5;strokeColor=#6C8EBF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="gost-cipher" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- FACTORY: CipherFactory (utility class)                       -->
+        <!-- ============================================================ -->
+        <mxCell id="cipher-factory" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;utility&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;CipherFactory&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ CIPHER_REGISTRY: dict&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_cipher(name: str): BaseCipher&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="960" y="60" width="270" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Factory dependency arrow to BaseCipher -->
+        <mxCell id="edge-factory" value="&lt;i&gt;&amp;lt;&amp;lt;creates&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#9673A6;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" source="cipher-factory" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- ANALYSIS MODULES                                             -->
+        <!-- ============================================================ -->
+
+        <!-- EntropyAnalyzer -->
+        <mxCell id="entropy-analyzer" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;EntropyAnalyzer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ shannon_entropy(data): float&lt;br/&gt;+ kl_divergence(data): float&lt;br/&gt;+ conditional_entropy(plain, cipher): float&lt;br/&gt;+ mutual_information(plain, cipher): float&lt;br/&gt;+ analyze_all(plain, cipher): dict&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="590" width="300" height="150" as="geometry"/>
+        </mxCell>
+
+        <!-- StatisticalAnalyzer -->
+        <mxCell id="statistical-analyzer" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;StatisticalAnalyzer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ chi_square_test(data): dict&lt;br/&gt;+ correlation_analysis(plain, cipher): dict&lt;br/&gt;+ distribution_metrics(data): dict&lt;br/&gt;+ analyze_all_statistics(plain, cipher): dict&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="590" width="310" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- AvalancheTest -->
+        <mxCell id="avalanche-test" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AvalancheTest&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ flip_bit(data, pos): bytes&lt;br/&gt;+ hamming_distance(a, b): int&lt;br/&gt;+ avalanche_coefficient(c1, c2): float&lt;br/&gt;+ run_avalanche_test(cipher, data, key, n): dict&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="710" y="590" width="310" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- MetricsCalculator -->
+        <mxCell id="metrics-calculator" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MetricsCalculator&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ calculate_algorithm_summary(df): DataFrame&lt;br/&gt;+ rank_algorithms(summary): DataFrame&lt;br/&gt;+ compare_block_vs_stream(df): dict&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="590" width="310" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- DataGenerator -->
+        <mxCell id="data-generator" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;DataGenerator&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ generate_data(type: str, size: int): bytes&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=11;fontFamily=Helvetica;html=1;rounded=1;shadow=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.5;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="590" width="270" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- DEPENDENCY ARROWS: Analysis modules use BaseCipher           -->
+        <!-- ============================================================ -->
+
+        <!-- AvalancheTest depends on BaseCipher (uses cipher parameter) -->
+        <mxCell id="edge-avalanche-dep" value="&lt;i&gt;&amp;lt;&amp;lt;uses&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;strokeWidth=1;strokeColor=#999999;fontSize=10;labelBackgroundColor=#FFFFFF;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" source="avalanche-test" target="base-cipher" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="865" y="540" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- SECTION LABELS / SEPARATORS                                  -->
+        <!-- ============================================================ -->
+
+        <!-- Encryption Module label -->
+        <mxCell id="label-encryption" value="Модуль шифрования (core.encryption)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontStyle=5;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="0" width="280" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Analysis Module label -->
+        <mxCell id="label-analysis" value="Модули анализа (core.entropy / core.statistics / core.avalanche / analytics)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontStyle=5;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="555" width="510" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Separator line -->
+        <mxCell id="separator" value="" style="line;strokeWidth=1;strokeColor=#CCCCCC;dashed=1;dashPattern=12 4;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="1530" height="10" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- LEGEND                                                       -->
+        <!-- ============================================================ -->
+        <mxCell id="legend-box" value="&lt;b&gt;Легенда&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#CCCCCC;strokeWidth=1;fontSize=11;verticalAlign=top;align=center;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="30" width="200" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-abstract" value="Абстрактный класс" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=center;" vertex="1" parent="legend-box">
+          <mxGeometry x="15" y="35" width="170" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-concrete" value="Конкретный шифр" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=center;" vertex="1" parent="legend-box">
+          <mxGeometry x="15" y="70" width="170" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-analysis" value="Модуль анализа" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=center;" vertex="1" parent="legend-box">
+          <mxGeometry x="15" y="105" width="170" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-factory" value="Фабрика / Утилита" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;align=center;" vertex="1" parent="legend-box">
+          <mxGeometry x="15" y="140" width="170" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-inherit-label" value="Наследование" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="legend-box">
+          <mxGeometry x="40" y="172" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-inherit-arrow" value="" style="endArrow=block;endFill=0;endSize=10;html=1;strokeWidth=1.5;strokeColor=#6C8EBF;" edge="1" parent="legend-box">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="182" as="sourcePoint"/>
+            <mxPoint x="180" y="182" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,361 @@
+<mxfile host="app.diagrams.net" modified="2026-03-21T00:00:00.000Z" agent="Claude Diagram Architect" version="24.0.0" type="device">
+  <diagram id="component-diagram" name="CryptoAnalyzer Component Diagram">
+    <mxGraphModel dx="1422" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ============================================ -->
+        <!-- USER ACTOR                                   -->
+        <!-- ============================================ -->
+        <mxCell id="user" value="Пользователь" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#E6E6E6;strokeColor=#333333;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="340" width="40" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- INFRASTRUCTURE: NGINX                        -->
+        <!-- ============================================ -->
+        <mxCell id="nginx" value="&lt;b&gt;&amp;laquo;обратный прокси&amp;raquo;&lt;/b&gt;&lt;br&gt;Nginx&lt;br&gt;&lt;i&gt;:80&lt;/i&gt;" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#F5F5F5;strokeColor=#666666;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="140" y="330" width="150" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- FRONTEND PACKAGE                             -->
+        <!-- ============================================ -->
+        <mxCell id="pkg-frontend" value="&lt;b&gt;&amp;laquo;package&amp;raquo;&lt;/b&gt;&lt;br&gt;Клиентская часть" style="shape=folder;fontStyle=0;spacingTop=10;tabWidth=100;tabHeight=20;tabPosition=left;html=1;whiteSpace=wrap;container=1;collapsible=0;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="120" y="30" width="380" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- React App container -->
+        <mxCell id="react-app" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;React App" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=1;container=1;collapsible=0;fontSize=12;verticalAlign=top;spacingTop=4;" vertex="1" parent="pkg-frontend">
+          <mxGeometry x="10" y="35" width="360" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- React tabs inside React App -->
+        <mxCell id="tab-sidebar" value="Sidebar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="10" y="40" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-overview" value="OverviewTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="100" y="40" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-entropy" value="EntropyTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="190" y="40" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-avalanche" value="AvalancheTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="280" y="40" width="70" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-distribution" value="DistributionTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="10" y="80" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-comparison" value="ComparisonTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="100" y="80" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-trace" value="TraceTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="190" y="80" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="tab-report" value="ReportTab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEEFB;strokeColor=#6C8EBF;fontSize=10;arcSize=30;" vertex="1" parent="react-app">
+          <mxGeometry x="280" y="80" width="70" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- API Client -->
+        <mxCell id="api-client" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;API Client (Axios)" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=1;fontSize=11;" vertex="1" parent="pkg-frontend">
+          <mxGeometry x="100" y="205" width="170" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- BACKEND PACKAGE                              -->
+        <!-- ============================================ -->
+        <mxCell id="pkg-backend" value="&lt;b&gt;&amp;laquo;package&amp;raquo;&lt;/b&gt;&lt;br&gt;Серверная часть" style="shape=folder;fontStyle=0;spacingTop=10;tabWidth=100;tabHeight=20;tabPosition=left;html=1;whiteSpace=wrap;container=1;collapsible=0;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="570" y="30" width="540" height="530" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Application -->
+        <mxCell id="fastapi" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;FastAPI Application" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=2;fontSize=12;" vertex="1" parent="pkg-backend">
+          <mxGeometry x="170" y="35" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- API Routes -->
+        <mxCell id="api-routes" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;API Routes&lt;br&gt;&lt;i&gt;experiments, reports&lt;/i&gt;" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1;fontSize=11;" vertex="1" parent="pkg-backend">
+          <mxGeometry x="180" y="110" width="170" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CORE PACKAGE (inside Backend)                -->
+        <!-- ============================================ -->
+        <mxCell id="pkg-core" value="&lt;b&gt;&amp;laquo;package&amp;raquo;&lt;/b&gt;&lt;br&gt;Core" style="shape=folder;fontStyle=0;spacingTop=10;tabWidth=80;tabHeight=18;tabPosition=left;html=1;whiteSpace=wrap;container=1;collapsible=0;fillColor=#E6F0E6;strokeColor=#82B366;strokeWidth=1;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;" vertex="1" parent="pkg-backend">
+          <mxGeometry x="20" y="190" width="500" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Модуль шифрования -->
+        <mxCell id="mod-encryption" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;Модуль шифрования" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1;fontSize=11;container=1;collapsible=0;verticalAlign=top;spacingTop=2;" vertex="1" parent="pkg-core">
+          <mxGeometry x="10" y="35" width="230" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-base" value="BaseCipher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;fontStyle=2;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="75" y="40" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl1" value="AES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="10" y="72" width="50" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl2" value="DES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="65" y="72" width="50" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl3" value="3DES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="120" y="72" width="50" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl4" value="Blowfish" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="10" y="100" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl5" value="ChaCha20" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="70" y="100" width="60" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc-impl6" value="Camellia" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-encryption">
+          <mxGeometry x="135" y="100" width="60" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Модуль энтропии -->
+        <mxCell id="mod-entropy" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;Модуль энтропии" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1;fontSize=11;container=1;collapsible=0;verticalAlign=top;spacingTop=2;" vertex="1" parent="pkg-core">
+          <mxGeometry x="260" y="35" width="230" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent-shannon" value="Shannon" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-entropy">
+          <mxGeometry x="10" y="45" width="65" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent-kl" value="KL Divergence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-entropy">
+          <mxGeometry x="85" y="45" width="80" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent-cond" value="Conditional" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-entropy">
+          <mxGeometry x="10" y="80" width="70" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ent-mi" value="Mutual Info" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-entropy">
+          <mxGeometry x="90" y="80" width="70" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Модуль статистики -->
+        <mxCell id="mod-statistics" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;Модуль статистики" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1;fontSize=11;container=1;collapsible=0;verticalAlign=top;spacingTop=2;" vertex="1" parent="pkg-core">
+          <mxGeometry x="10" y="185" width="230" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="stat-chi" value="Chi-square" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-statistics">
+          <mxGeometry x="10" y="45" width="65" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="stat-corr" value="Correlation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-statistics">
+          <mxGeometry x="85" y="45" width="70" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="stat-dist" value="Distribution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-statistics">
+          <mxGeometry x="10" y="80" width="70" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Модуль лавинного эффекта -->
+        <mxCell id="mod-avalanche" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;Модуль лавинного эффекта" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1;fontSize=11;container=1;collapsible=0;verticalAlign=top;spacingTop=2;" vertex="1" parent="pkg-core">
+          <mxGeometry x="260" y="185" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="aval-test" value="Лавинный тест" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0E6;strokeColor=#82B366;fontSize=9;arcSize=30;" vertex="1" parent="mod-avalanche">
+          <mxGeometry x="65" y="50" width="100" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- DATA GENERATION PACKAGE                      -->
+        <!-- ============================================ -->
+        <mxCell id="pkg-datagen" value="&lt;b&gt;&amp;laquo;package&amp;raquo;&lt;/b&gt;&lt;br&gt;Генерация данных" style="shape=folder;fontStyle=0;spacingTop=10;tabWidth=100;tabHeight=20;tabPosition=left;html=1;whiteSpace=wrap;container=1;collapsible=0;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="30" width="360" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="datagen" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;DataGenerator" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1;fontSize=11;container=1;collapsible=0;verticalAlign=top;spacingTop=2;" vertex="1" parent="pkg-datagen">
+          <mxGeometry x="20" y="35" width="320" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-text" value="text" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="10" y="40" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-binary" value="binary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="70" y="40" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-random" value="random" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="130" y="40" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-image" value="image" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="190" y="40" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-zeros" value="zeros" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="10" y="70" width="55" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-structured" value="structured" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="70" y="70" width="65" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dg-incremental" value="incremental" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#D6B656;fontSize=9;arcSize=30;" vertex="1" parent="datagen">
+          <mxGeometry x="140" y="70" width="70" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- ANALYTICS PACKAGE                            -->
+        <!-- ============================================ -->
+        <mxCell id="pkg-analytics" value="&lt;b&gt;&amp;laquo;package&amp;raquo;&lt;/b&gt;&lt;br&gt;Analytics" style="shape=folder;fontStyle=0;spacingTop=10;tabWidth=100;tabHeight=20;tabPosition=left;html=1;whiteSpace=wrap;container=1;collapsible=0;fillColor=#FFE0C2;strokeColor=#D79B00;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="260" width="360" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="metrics-calc" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;MetricsCalculator" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#FFE0C2;strokeColor=#D79B00;strokeWidth=1;fontSize=11;" vertex="1" parent="pkg-analytics">
+          <mxGeometry x="20" y="40" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="report-gen" value="&lt;b&gt;&amp;laquo;component&amp;raquo;&lt;/b&gt;&lt;br&gt;ReportGenerator" style="shape=component;align=center;spacingLeft=36;rounded=1;shadow=0;html=1;whiteSpace=wrap;fillColor=#FFE0C2;strokeColor=#D79B00;strokeWidth=1;fontSize=11;" vertex="1" parent="pkg-analytics">
+          <mxGeometry x="190" y="40" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- DEPENDENCY EDGES                             -->
+        <!-- ============================================ -->
+
+        <!-- User -> Nginx (HTTP) -->
+        <mxCell id="edge-user-nginx" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#333333;strokeWidth=1.5;fontSize=10;fontColor=#333333;dashed=0;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;" edge="1" source="user" target="nginx" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Nginx -> React App (статические файлы) -->
+        <mxCell id="edge-nginx-react" value="статические файлы" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6C8EBF;strokeWidth=1.5;fontSize=10;fontColor=#6C8EBF;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" source="nginx" target="pkg-frontend" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Nginx -> FastAPI (proxy /api) -->
+        <mxCell id="edge-nginx-fastapi" value="proxy /api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;fontSize=10;fontColor=#82B366;dashed=0;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=35;" edge="1" source="nginx" target="pkg-backend" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="365"/>
+              <mxPoint x="520" y="65"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- React App -> API Client -->
+        <mxCell id="edge-react-apiclient" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6C8EBF;strokeWidth=1.5;fontSize=10;dashed=0;endArrow=open;endFill=0;" edge="1" source="react-app" target="api-client" parent="pkg-frontend">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- API Client -> FastAPI (REST API) -->
+        <mxCell id="edge-apiclient-fastapi" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;fontSize=10;fontColor=#333333;dashed=0;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;" edge="1" source="api-client" target="fastapi" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="265"/>
+              <mxPoint x="540" y="90"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPI -> API Routes -->
+        <mxCell id="edge-fastapi-routes" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;dashed=0;endArrow=open;endFill=0;" edge="1" source="fastapi" target="api-routes" parent="pkg-backend">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI -> Модуль шифрования -->
+        <mxCell id="edge-fastapi-enc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" source="api-routes" target="mod-encryption" parent="pkg-backend">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI -> Модуль энтропии -->
+        <mxCell id="edge-fastapi-entropy" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" edge="1" source="api-routes" target="mod-entropy" parent="pkg-backend">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI -> Модуль статистики -->
+        <mxCell id="edge-fastapi-stats" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;" edge="1" source="api-routes" target="mod-statistics" parent="pkg-backend">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="265" y="178"/>
+              <mxPoint x="135" y="178"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPI -> Модуль лавинного эффекта -->
+        <mxCell id="edge-fastapi-aval" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82B366;strokeWidth=1.5;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;" edge="1" source="api-routes" target="mod-avalanche" parent="pkg-backend">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="350" y="178"/>
+              <mxPoint x="375" y="178"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Модуль лавинного эффекта -> Модуль шифрования -->
+        <mxCell id="edge-aval-enc" value="&amp;laquo;use&amp;raquo;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B85450;strokeWidth=1.5;fontSize=10;fontColor=#B85450;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;" edge="1" source="mod-avalanche" target="mod-encryption" parent="pkg-core">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="375" y="170"/>
+              <mxPoint x="125" y="170"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPI -> Data Generation -->
+        <mxCell id="edge-fastapi-datagen" value="&amp;laquo;use&amp;raquo;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D6B656;strokeWidth=1.5;fontSize=10;fontColor=#D6B656;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="pkg-backend" target="pkg-datagen" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1150" y="163"/>
+              <mxPoint x="1150" y="125"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPI -> Analytics -->
+        <mxCell id="edge-fastapi-analytics" value="&amp;laquo;use&amp;raquo;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D79B00;strokeWidth=1.5;fontSize=10;fontColor=#D79B00;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="pkg-backend" target="pkg-analytics" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1150" y="295"/>
+              <mxPoint x="1150" y="330"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- TITLE                                        -->
+        <!-- ============================================ -->
+        <mxCell id="title" value="CryptoAnalyzer — Диаграмма компонентов UML" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="470" y="600" width="450" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- LEGEND                                       -->
+        <!-- ============================================ -->
+        <mxCell id="legend" value="Легенда" style="shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;html=1;whiteSpace=wrap;fontSize=11;fontStyle=1;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="30" y="480" width="20" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-blue" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="490" width="20" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-blue-label" value="Клиентская часть" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="487" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-green" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="515" width="20" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-green-label" value="Серверная часть / Ядро" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="512" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-yellow" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="20" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-yellow-label" value="Генерация данных" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="537" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-orange" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0C2;strokeColor=#D79B00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="565" width="20" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-orange-label" value="Аналитика" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="562" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-dash" value="" style="endArrow=open;endFill=0;dashed=1;dashPattern=8 4;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="597" as="sourcePoint"/>
+            <mxPoint x="80" y="597" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg-dash-label" value="&amp;laquo;зависимость&amp;raquo;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="587" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg-solid" value="" style="endArrow=open;endFill=0;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="620" as="sourcePoint"/>
+            <mxPoint x="80" y="620" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg-solid-label" value="HTTP / REST" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="610" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
