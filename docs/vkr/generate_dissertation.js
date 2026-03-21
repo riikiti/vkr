@@ -18,6 +18,7 @@ const MARGIN_BOTTOM = 1134; // 2cm
 const MARGIN_LEFT = 1701;   // 3cm
 const MARGIN_RIGHT = 851;   // 1.5cm
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT; // ~9354
+const LANDSCAPE_CONTENT_WIDTH = PAGE_HEIGHT - MARGIN_LEFT - MARGIN_RIGHT; // ~14286 (landscape)
 
 // Font sizes in half-points
 const FONT_SIZE = 28;       // 14pt
@@ -203,6 +204,7 @@ function diagramImage(filename, widthCm) {
     alignment: AlignmentType.CENTER,
     spacing: { after: 0, before: 120, line: LINE_SPACING },
     indent: { firstLine: 0 },
+    keepNext: true,
     children: [new ImageRun({
       type: "png",
       data: data,
@@ -233,8 +235,14 @@ function screenshotImage(filename, widthCm) {
   });
 }
 
-let figureCounter = 0;
+let currentChapter = 0;
+let figureCounterInChapter = 0;
 let tableCounter = 0;
+
+function setChapter(num) {
+  currentChapter = num;
+  figureCounterInChapter = 0;
+}
 
 function figureCaption(text, isTable = false) {
   if (isTable) {
@@ -243,18 +251,19 @@ function figureCaption(text, isTable = false) {
       spacing: { after: 240, before: 120, line: LINE_SPACING },
       alignment: AlignmentType.RIGHT,
       indent: { firstLine: 0 },
+      keepNext: true,
       children: [
-        new TextRun({ text: `Таблица ${tableCounter} \u2013 ${text}`, font: "Times New Roman", size: FONT_SIZE }),
+        new TextRun({ text: `Таблица ${tableCounter}. ${text}`, font: "Times New Roman", size: FONT_SIZE, bold: true }),
       ],
     });
   } else {
-    figureCounter++;
+    figureCounterInChapter++;
     return new Paragraph({
       spacing: { after: 240, before: 120, line: LINE_SPACING },
       alignment: AlignmentType.CENTER,
       indent: { firstLine: 0 },
       children: [
-        new TextRun({ text: `Рисунок ${figureCounter} \u2013 ${text}`, font: "Times New Roman", size: FONT_SIZE }),
+        new TextRun({ text: `Рис. ${currentChapter}.${figureCounterInChapter}. ${text}`, font: "Times New Roman", size: FONT_SIZE, bold: true }),
       ],
     });
   }
@@ -271,6 +280,7 @@ function ref(num) {
 // ==================== CHAPTER 1 CONTENT ====================
 
 function generateChapter1() {
+  setChapter(1);
   const children = [];
 
   // CHAPTER TITLE
@@ -467,9 +477,9 @@ function generateChapter1() {
     children: cells.map((text, i) => new TableCell({
       borders,
       margins: cellMargins,
-      width: { size: [1800, 1200, 1200, 1200, 1200, 1200, 1554][i], type: WidthType.DXA },
+      width: { size: [2750, 1830, 1830, 1830, 1830, 1830, 2386][i], type: WidthType.DXA },
       children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
@@ -481,10 +491,11 @@ function generateChapter1() {
     children: cells.map((text, i) => new TableCell({
       borders,
       margins: cellMargins,
-      width: { size: [1800, 1200, 1200, 1200, 1200, 1200, 1554][i], type: WidthType.DXA },
+      width: { size: [2750, 1830, 1830, 1830, 1830, 1830, 2386][i], type: WidthType.DXA },
       children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
+        indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL })],
       })],
     })),
@@ -494,8 +505,8 @@ function generateChapter1() {
   children.push(figureCaption("Характеристики исследуемых алгоритмов шифрования", true));
 
   children.push(new Table({
-    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
-    columnWidths: [1800, 1200, 1200, 1200, 1200, 1200, 1554],
+    width: { size: LANDSCAPE_CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [2750, 1830, 1830, 1830, 1830, 1830, 2386],
     rows: [
       headerRow(["Алгоритм", "Тип", "Размер ключа, бит", "Размер блока, бит", "Число раундов", "Архитектура", "Год"]),
       dataRow(["AES-256", "Блочный", "256", "128", "14", "SPN", "2001"]),
@@ -694,6 +705,7 @@ function formulaNumbered(text, number) {
 }
 
 function generateChapter2() {
+  setChapter(2);
   const children = [];
 
   children.push(heading1("2. Разработка комплексной методики оценки криптостойкости на основе энтропийного анализа"));
@@ -715,7 +727,7 @@ function generateChapter2() {
     { text: ". Шеннон определил энтропию дискретной случайной величины X, принимающей значения x\u2081, x\u2082, ..., x\u2099 с вероятностями p(x\u2081), p(x\u2082), ..., p(x\u2099), формулой:" },
   ]));
 
-  children.push(formulaNumbered("H(X) = \u2212\u2211\u1d62 p(x\u1d62) \u00B7 log\u2082(p(x\u1d62))", "2.1"));
+  children.push(formulaNumbered("H(X) = -\u2211 p(xi) \u00B7 log2(p(xi))", "2.1"));
 
   children.push(normalParagraph("Энтропия обладает следующими свойствами:"));
 
@@ -726,7 +738,7 @@ function generateChapter2() {
 
   children.push(normalParagraph("Для байтовой последовательности (n = 256 возможных значений) максимальная энтропия составляет:"));
 
-  children.push(formulaNumbered("H\u2098\u2090\u2093 = log\u2082(256) = 8 бит/байт", "2.2"));
+  children.push(formulaNumbered("Hmax = log2(256) = 8 бит/байт", "2.2"));
 
   children.push(normalParagraph([
     { text: "Шеннон ввел понятие " },
@@ -770,13 +782,13 @@ function generateChapter2() {
     { text: ". Для последовательности байтов C = {c\u2081, c\u2082, ..., c\u2099} энтропия вычисляется как:" },
   ]));
 
-  children.push(formulaNumbered("H(C) = \u2212\u2211\u1d62\u208c\u2080\u00B2\u2075\u2075 p(i) \u00B7 log\u2082(p(i))", "2.4"));
+  children.push(formulaNumbered("H(C) = -\u2211 p(i) \u00B7 log2(p(i)), i = 0..255", "2.4"));
 
   children.push(normalParagraph("где p(i) = freq(i) / N \u2013 относительная частота байта i в последовательности, freq(i) \u2013 количество вхождений байта i, N \u2013 общая длина последовательности."));
 
   children.push(normalParagraph("Для оценки качества шифрования вводится нормализованный энтропийный балл:"));
 
-  children.push(formulaNumbered("S\u2091\u2099\u209c\u2063\u2099\u2092\u209a\u2099 = H(C) / H\u2098\u2090\u2093 = H(C) / 8", "2.5"));
+  children.push(formulaNumbered("S_entropy = H(C) / Hmax = H(C) / 8", "2.5"));
 
   children.push(normalParagraph("принимающий значения в диапазоне [0, 1]. Значение S\u2091\u2099\u209c\u2063\u2099\u2092\u209a\u2099 = 1 соответствует идеальному равномерному распределению."));
 
@@ -797,15 +809,15 @@ function generateChapter2() {
     { text: ". Для распределения P шифртекста и равномерного распределения Q = U(0, 255) KL-дивергенция определяется как:" },
   ]));
 
-  children.push(formulaNumbered("D\u2096\u2097(P \u2016 Q) = \u2211\u1d62\u208c\u2080\u00B2\u2075\u2075 p(i) \u00B7 log\u2082(p(i) / q(i))", "2.6"));
+  children.push(formulaNumbered("D_KL(P || Q) = \u2211 p(i) \u00B7 log2(p(i) / q(i)), i = 0..255", "2.6"));
 
   children.push(normalParagraph("где q(i) = 1/256 для всех i. Для предотвращения неопределенности при p(i) = 0 применяется сглаживание Лапласа:"));
 
-  children.push(formulaNumbered("p\u0303(i) = (freq(i) + 1) / (N + 256)", "2.7"));
+  children.push(formulaNumbered("p'(i) = (freq(i) + 1) / (N + 256)", "2.7"));
 
   children.push(normalParagraph("KL-дивергенция обладает следующими свойствами: D\u2096\u2097 \u2265 0 (неотрицательность, неравенство Гиббса); D\u2096\u2097 = 0 тогда и только тогда, когда P = Q; D\u2096\u2097 не является метрикой в математическом смысле (не симметрична). Связь с энтропией Шеннона при Q = U(0, 255):"));
 
-  children.push(formulaNumbered("D\u2096\u2097(P \u2016 U) = log\u2082(256) \u2212 H(P) = 8 \u2212 H(P)", "2.8"));
+  children.push(formulaNumbered("D_KL(P || U) = log2(256) - H(P) = 8 - H(P)", "2.8"));
 
   children.push(normalParagraph("Интерпретация: D\u2096\u2097 \u2248 0 (< 0.01) \u2013 шифртекст практически неотличим от случайной последовательности; D\u2096\u2097 > 0.1 \u2013 значимые отклонения от равномерности."));
 
@@ -814,7 +826,7 @@ function generateChapter2() {
 
   children.push(normalParagraph("Условная энтропия H(Y|X) оценивает остаточную неопределенность шифртекста Y при известном открытом тексте X. Для вычисления совместного распределения p(x, y) непрерывные значения байтов квантуются в n бинов (по умолчанию n = 16):"));
 
-  children.push(formulaNumbered("H(Y|X) = \u2212\u2211\u2093 \u2211\u1d67 p(x, y) \u00B7 log\u2082(p(y|x))", "2.9"));
+  children.push(formulaNumbered("H(Y|X) = -\u2211x \u2211y p(x, y) \u00B7 log2(p(y|x))", "2.9"));
 
   children.push(normalParagraph("где p(y|x) = p(x, y) / p(x) \u2013 условная вероятность. Интерпретация: H(Y|X) \u2248 H(Y) \u2013 знание открытого текста практически не снижает неопределенность шифртекста (идеальный шифр); H(Y|X) \u226A H(Y) \u2013 открытый текст содержит значимую информацию о шифртексте (уязвимость)."));
 
@@ -823,11 +835,11 @@ function generateChapter2() {
 
   children.push(normalParagraph("Взаимная информация I(X; Y) количественно оценивает статистическую зависимость между открытым текстом X и шифртекстом Y:"));
 
-  children.push(formulaNumbered("I(X; Y) = H(Y) \u2212 H(Y|X) = H(X) + H(Y) \u2212 H(X, Y)", "2.10"));
+  children.push(formulaNumbered("I(X; Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X, Y)", "2.10"));
 
   children.push(normalParagraph("Взаимная информация обладает свойствами: I(X; Y) \u2265 0; I(X; Y) = 0 тогда и только тогда, когда X и Y статистически независимы; I(X; Y) = I(Y; X) (симметричность). Для удобства сравнения вводится нормализованная взаимная информация:"));
 
-  children.push(formulaNumbered("NMI = I(X; Y) / H(Y) \u2208 [0, 1]", "2.11"));
+  children.push(formulaNumbered("NMI = I(X; Y) / H(Y), NMI \u2208 [0, 1]", "2.11"));
 
   children.push(normalParagraph("Интерпретация: I(X; Y) \u2248 0 (NMI \u2248 0) \u2013 полная статистическая независимость, идеальный шифр; I(X; Y) > 0 \u2013 наличие утечки информации. Взаимная информация является наиболее строгой метрикой, так как учитывает не только линейные, но и нелинейные статистические связи."));
 
@@ -846,24 +858,24 @@ function generateChapter2() {
 
   children.push(normalParagraph("Критерий хи-квадрат (\u03C7\u00B2) используется для проверки гипотезы H\u2080 о равномерности распределения байтов шифртекста:"));
 
-  children.push(formulaNumbered("\u03C7\u00B2 = \u2211\u1d62\u208c\u2080\u00B2\u2075\u2075 (O\u1d62 \u2212 E\u1d62)\u00B2 / E\u1d62", "2.12"));
+  children.push(formulaNumbered("\u03C7\u00B2 = \u2211 (Oi - Ei)\u00B2 / Ei, i = 0..255", "2.12"));
 
   children.push(normalParagraph("где O\u1d62 \u2013 наблюдаемая частота байта i, E\u1d62 = N / 256 \u2013 ожидаемая частота при равномерном распределении. При справедливости гипотезы H\u2080 статистика \u03C7\u00B2 имеет распределение хи-квадрат с k = 255 степенями свободы. Гипотеза не отвергается при p-value > 0.05."));
 
   children.push(normalParagraph("Дополнительно вычисляется среднее отклонение частоты:"));
 
-  children.push(formulaNumbered("\u03B4\u2091\u2063\u2099\u2091\u2096 = (1/256) \u00B7 \u2211\u1d62\u208c\u2080\u00B2\u2075\u2075 |O\u1d62/N \u2212 1/256|", "2.13"));
+  children.push(formulaNumbered("\u03B4 = (1/256) \u00B7 \u2211 |Oi/N - 1/256|, i = 0..255", "2.13"));
 
   // 2.3.2
   children.push(heading3("2.3.2.", "Корреляционный анализ"));
 
   children.push(normalParagraph("Коэффициент корреляции Пирсона между байтами открытого текста X и шифртекста Y:"));
 
-  children.push(formulaNumbered("r = \u2211(x\u1d62 \u2212 x\u0304)(y\u1d62 \u2212 \u0233) / \u221A(\u2211(x\u1d62 \u2212 x\u0304)\u00B2 \u00B7 \u2211(y\u1d62 \u2212 \u0233)\u00B2)", "2.14"));
+  children.push(formulaNumbered("r = \u2211(xi - x\u0305)(yi - y\u0305) / \u221A(\u2211(xi - x\u0305)\u00B2 \u00B7 \u2211(yi - y\u0305)\u00B2)", "2.14"));
 
   children.push(normalParagraph("Для идеального шифра r \u2248 0. Коэффициент ранговой корреляции Спирмена вычисляется аналогично по рангам, что обеспечивает робастность к нелинейным монотонным зависимостям. Автокорреляция шифртекста r(lag) = corr(c\u1d62, c\u1d62\u208a\u2097\u2090\u2091) строится для lag = 1, ..., 10. Для ранжирования вводится балл:"));
 
-  children.push(formulaNumbered("S\u2091\u2092\u2063\u2099\u2063\u2099 = 1 \u2212 |r\u2091\u2091\u2090\u2063\u2099\u209b\u2092\u2099|", "2.15"));
+  children.push(formulaNumbered("S_corr = 1 - |r_Pearson|", "2.15"));
 
   // 2.3.3
   children.push(heading3("2.3.3.", "Метрики распределения"));
@@ -890,17 +902,17 @@ function generateChapter2() {
 
   children.push(normalParagraph("Расстояние Хэмминга между двумя двоичными последовательностями \u2013 количество позиций, в которых соответствующие биты различаются:"));
 
-  children.push(formulaNumbered("d(c\u2081, c\u2082) = \u2211\u2c7c\u208c\u2081\u1d38 (c\u2081\u2c7c \u2295 c\u2082\u2c7c)", "2.16"));
+  children.push(formulaNumbered("d(c1, c2) = \u2211 (c1j \u2295 c2j), j = 1..L", "2.16"));
 
   children.push(normalParagraph("Лавинный коэффициент определяется как:"));
 
-  children.push(formulaNumbered("AC = d(c\u2081, c\u2082) / L", "2.17"));
+  children.push(formulaNumbered("AC = d(c1, c2) / L", "2.17"));
 
   children.push(normalParagraph("где L \u2013 длина последовательности в битах. Методика тестирования включает: шифрование исходного сообщения, инвертирование случайного бита, повторное шифрование, вычисление AC. Процедура повторяется N = 100 раз."));
 
   children.push(normalParagraph("Интерпретация: AC \u2248 0.5 \u2013 идеальный лавинный эффект; AC < 0.4 \u2013 слабый эффект, уязвимость к дифференциальному криптоанализу; AC \u2248 0 \u2013 критическая уязвимость. Для ранжирования:"));
 
-  children.push(formulaNumbered("S\u2090\u1d65\u2090\u2097\u2090\u2099\u1d9c\u2095\u2091 = 1 \u2212 |AC\u2098\u2091\u2090\u2099 \u2212 0.5| \u00B7 2", "2.18"));
+  children.push(formulaNumbered("S_avalanche = 1 - |AC_mean - 0.5| \u00B7 2", "2.18"));
 
   // === 2.5 ===
   children.push(heading2("2.5.", "Комплексная методика оценки криптостойкости"));
@@ -950,7 +962,7 @@ function generateChapter2() {
 
   children.push(normalParagraph("Комплексный показатель криптостойкости вычисляется как среднее арифметическое четырех нормализованных частных баллов:"));
 
-  children.push(formulaNumbered("S\u209c\u2092\u209c\u2090\u2097 = (S\u2091\u2099\u209c\u2063\u2099\u2092\u209a\u2099 + S\u2096\u2097 + S\u2090\u1d65\u2090\u2097\u2090\u2099\u1d9c\u2095\u2091 + S\u1d9c\u2092\u2063\u2099\u2063\u2099) / 4", "2.19"));
+  children.push(formulaNumbered("S_total = (S_entropy + S_KL + S_avalanche + S_corr) / 4", "2.19"));
 
   children.push(normalParagraph("где каждый балл принимает значения в диапазоне [0, 1]: 1 соответствует идеальному результату по данному критерию. Алгоритмы ранжируются по убыванию S\u209c\u2092\u209c\u2090\u2097. Выбор равных весов обусловлен отсутствием априорных оснований для предпочтения одного критерия над другим."));
 
@@ -971,6 +983,7 @@ function generateChapter2() {
 // ==================== CHAPTER 3 ====================
 
 function generateChapter3() {
+  setChapter(3);
   const children = [];
 
   children.push(heading1("ГЛАВА 3. ПРОГРАММНАЯ РЕАЛИЗАЦИЯ ПЛАТФОРМЫ CRYPTOANALYZER"));
@@ -1035,11 +1048,13 @@ function generateChapter3() {
   children.push(listItem("Frontend (Nginx, порт 80) \u2014 обслуживает статические файлы React-приложения и проксирует API-запросы;", { listRef: list9 }));
   children.push(listItem("Backend (Uvicorn, порт 8000) \u2014 обрабатывает REST API запросы, выполняет криптографические вычисления.", { listRef: list9 }));
 
-  children.push(normalParagraph("Пользователь взаимодействует с системой через веб-браузер, отправляя запросы к Nginx, который перенаправляет API-запросы (с префиксом /api) к серверу Uvicorn."));
+  children.push(normalParagraph("Пользователь взаимодействует с системой через веб-браузер, отправляя запросы к Nginx, который перенаправляет API-запросы (с префиксом /api) к серверу Uvicorn. Схема развертывания представлена на рис. 3.1."));
 
-  // Рисунок — схема развертывания
-  children.push(diagramImage("deployment_diagram.png", 16));
+  // Рисунок — схема развертывания (landscape)
+  children.push(LANDSCAPE_START);
+  children.push(diagramImage("deployment_diagram.png", 23));
   children.push(figureCaption("Диаграмма развертывания системы CryptoAnalyzer"));
+  children.push(LANDSCAPE_END);
 
   children.push(heading3("3.2.3.", "Выбор и обоснование технологий"));
 
@@ -1107,7 +1122,7 @@ function generateChapter3() {
       width: { size: width, type: WidthType.DXA },
       margins: techCellMargins,
       children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
@@ -1121,6 +1136,7 @@ function generateChapter3() {
       width: { size: width, type: WidthType.DXA },
       margins: techCellMargins,
       children: [new Paragraph({
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL })],
@@ -1475,23 +1491,29 @@ function generateChapter3() {
     { text: "\u2014 ГОСТ 28147-89 в режиме CBC, размер ключа 32 байта, блок 8 байт. Реализация включает 8 S-блоков подстановки и 32 раунда сети Фейстеля." },
   ]));
 
-  // Рисунок — диаграмма классов
-  children.push(diagramImage("class_diagram.png", 16));
+  children.push(normalParagraph("Иерархия классов модуля шифрования представлена на рис. 3.2."));
+
+  // Рисунок — диаграмма классов (landscape)
+  children.push(LANDSCAPE_START);
+  children.push(diagramImage("class_diagram.png", 25));
   children.push(figureCaption("Диаграмма классов модуля шифрования"));
+  children.push(LANDSCAPE_END);
 
   children.push(normalParagraph("Функция-фабрика get_cipher(name) принимает строковое имя алгоритма и возвращает экземпляр соответствующего класса из реестра CIPHER_REGISTRY."));
 
   children.push(heading3("3.4.2.", "Диаграмма компонентов"));
 
-  children.push(normalParagraph("Система состоит из следующих компонентов: Frontend (React), Nginx (обратный прокси), Backend API (FastAPI), Data Generation (генерация тестовых данных), Encryption (шифрование), Entropy Analysis (энтропийные метрики), Statistical Analysis (статистические тесты), Avalanche Test (лавинный эффект) и Analytics (агрегация и отчеты)."));
+  children.push(normalParagraph("Система состоит из следующих компонентов: Frontend (React), Nginx (обратный прокси), Backend API (FastAPI), Data Generation (генерация тестовых данных), Encryption (шифрование), Entropy Analysis (энтропийные метрики), Statistical Analysis (статистические тесты), Avalanche Test (лавинный эффект) и Analytics (агрегация и отчеты). Диаграмма компонентов представлена на рис. 3.3."));
 
-  // Рисунок — диаграмма компонентов
-  children.push(diagramImage("component_diagram.png", 16));
+  // Рисунок — диаграмма компонентов (landscape)
+  children.push(LANDSCAPE_START);
+  children.push(diagramImage("component_diagram.png", 25));
   children.push(figureCaption("Диаграмма компонентов системы CryptoAnalyzer"));
+  children.push(LANDSCAPE_END);
 
   children.push(heading3("3.4.3.", "Диаграмма последовательности проведения эксперимента"));
 
-  children.push(normalParagraph("Процесс проведения эксперимента включает следующие взаимодействия:"));
+  children.push(normalParagraph("Процесс проведения эксперимента включает следующие взаимодействия (рис. 3.4):"));
 
   const nlist6 = newNumberedList();
   children.push(listItem("Пользователь настраивает параметры в интерфейсе и нажимает «Запустить».", { numbered: true, listRef: nlist6 }));
@@ -1503,13 +1525,15 @@ function generateChapter3() {
   children.push(listItem("Backend возвращает ExperimentResponse клиенту.", { numbered: true, listRef: nlist6 }));
   children.push(listItem("Frontend отображает результаты на вкладках интерфейса.", { numbered: true, listRef: nlist6 }));
 
-  // Рисунок — диаграмма последовательности
-  children.push(diagramImage("sequence_diagram.png", 16));
+  // Рисунок — диаграмма последовательности (landscape)
+  children.push(LANDSCAPE_START);
+  children.push(diagramImage("sequence_diagram.png", 20));
   children.push(figureCaption("Диаграмма последовательности проведения эксперимента"));
+  children.push(LANDSCAPE_END);
 
   children.push(heading3("3.4.4.", "Диаграмма деятельности комплексной оценки"));
 
-  children.push(normalParagraph("Алгоритм комплексной оценки криптостойкости включает следующие этапы: получение параметров, генерация тестовых данных (7 типов \u00d7 3 размера), для каждого алгоритма \u2014 шифрование, расчет энтропии и статистик, проведение теста лавинного эффекта, объединение результатов в DataFrame, расчет средних значений, вычисление частных баллов S_entropy, S_KL, S_avalanche, S_corr, вычисление S_total и ранжирование по убыванию."));
+  children.push(normalParagraph("Алгоритм комплексной оценки криптостойкости (рис. 3.5) включает следующие этапы: получение параметров, генерация тестовых данных (7 типов \u00d7 3 размера), для каждого алгоритма \u2014 шифрование, расчет энтропии и статистик, проведение теста лавинного эффекта, объединение результатов в DataFrame, расчет средних значений, вычисление частных баллов S_entropy, S_KL, S_avalanche, S_corr, вычисление S_total и ранжирование по убыванию."));
 
   // Рисунок — диаграмма деятельности
   children.push(diagramImage("activity_diagram.png", 12));
@@ -1560,6 +1584,8 @@ function generateChapter3() {
   children.push(listItem("Трассировка \u2014 пошаговая визуализация процесса шифрования с отображением данных на каждом этапе;", { listRef: list11 }));
   children.push(listItem("Отчет \u2014 предпросмотр и скачивание отчета в форматах Markdown, CSV, JSON.", { listRef: list11 }));
 
+  children.push(normalParagraph("Внешний вид интерфейса представлен на рис. 3.6\u20133.11."));
+
   // Скриншоты интерфейса
   children.push(screenshotImage("01_main_interface.png", 16));
   children.push(figureCaption("Главный экран платформы CryptoAnalyzer"));
@@ -1606,6 +1632,7 @@ function generateChapter3() {
 // ==================== CHAPTER 4 ====================
 
 function generateChapter4() {
+  setChapter(4);
   const children = [];
 
   children.push(heading1("ГЛАВА 4. ЭКСПЕРИМЕНТАЛЬНАЯ ПРОВЕРКА РЕЗУЛЬТАТОВ И ОЦЕНКА ЭФФЕКТИВНОСТИ"));
@@ -1653,7 +1680,7 @@ function generateChapter4() {
       width: { size: width, type: WidthType.DXA },
       margins: cellMargins,
       children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
@@ -1667,7 +1694,7 @@ function generateChapter4() {
       width: { size: width, type: WidthType.DXA },
       margins: cellMargins,
       children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL })],
@@ -1815,44 +1842,44 @@ function generateChapter4() {
   children.push(figureCaption("Результаты теста лавинного эффекта", true));
 
   children.push(new Table({
-    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
-    columnWidths: [1800, 1200, 1400, 1400, 1400, 1100, 1054],
+    width: { size: LANDSCAPE_CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [2750, 1830, 2140, 2140, 2140, 1680, 1606],
     rows: [
       new TableRow({ children: [
-        headerCell("Алгоритм", 1800),
-        headerCell("Размер", 1200),
-        headerCell("AC_mean", 1400),
-        headerCell("AC_std", 1400),
-        headerCell("AC_min", 1400),
-        headerCell("AC_max", 1100),
-        headerCell("Норма", 1054),
+        headerCell("Алгоритм", 2750),
+        headerCell("Размер", 1830),
+        headerCell("AC_mean", 2140),
+        headerCell("AC_std", 2140),
+        headerCell("AC_min", 2140),
+        headerCell("AC_max", 1680),
+        headerCell("Норма", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("AES-256", 1800), dataCell("1 КБ", 1200), dataCell("0.2456", 1400), dataCell("0.1335", 1400), dataCell("0.0166", 1400), dataCell("0.4791", 1100), dataCell("\u2713", 1054),
+        dataCell("AES-256", 2750), dataCell("1 КБ", 1830), dataCell("0.2456", 2140), dataCell("0.1335", 2140), dataCell("0.0166", 2140), dataCell("0.4791", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("AES-256", 1800), dataCell("10 КБ", 1200), dataCell("0.2374", 1400), dataCell("0.1356", 1400), dataCell("0.0166", 1400), dataCell("0.4791", 1100), dataCell("\u2713", 1054),
+        dataCell("AES-256", 2750), dataCell("10 КБ", 1830), dataCell("0.2374", 2140), dataCell("0.1356", 2140), dataCell("0.0166", 2140), dataCell("0.4791", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("AES-256", 1800), dataCell("100 КБ", 1200), dataCell("0.2367", 1400), dataCell("0.1357", 1400), dataCell("0.0166", 1400), dataCell("0.4791", 1100), dataCell("\u2713", 1054),
+        dataCell("AES-256", 2750), dataCell("100 КБ", 1830), dataCell("0.2367", 2140), dataCell("0.1357", 2140), dataCell("0.0166", 2140), dataCell("0.4791", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("DES", 1800), dataCell("1 КБ", 1200), dataCell("0.2409", 1400), dataCell("0.1346", 1400), dataCell("0.0143", 1400), dataCell("0.4782", 1100), dataCell("\u2713", 1054),
+        dataCell("DES", 2750), dataCell("1 КБ", 1830), dataCell("0.2409", 2140), dataCell("0.1346", 2140), dataCell("0.0143", 2140), dataCell("0.4782", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("3DES", 1800), dataCell("1 КБ", 1200), dataCell("0.2406", 1400), dataCell("0.1343", 1400), dataCell("0.0151", 1400), dataCell("0.4769", 1100), dataCell("\u2713", 1054),
+        dataCell("3DES", 2750), dataCell("1 КБ", 1830), dataCell("0.2406", 2140), dataCell("0.1343", 2140), dataCell("0.0151", 2140), dataCell("0.4769", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("Blowfish", 1800), dataCell("1 КБ", 1200), dataCell("0.2408", 1400), dataCell("0.1341", 1400), dataCell("0.0150", 1400), dataCell("0.4809", 1100), dataCell("\u2713", 1054),
+        dataCell("Blowfish", 2750), dataCell("1 КБ", 1830), dataCell("0.2408", 2140), dataCell("0.1341", 2140), dataCell("0.0150", 2140), dataCell("0.4809", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("\u0413\u041E\u0421\u0422", 1800), dataCell("1 КБ", 1200), dataCell("0.2409", 1400), dataCell("0.1351", 1400), dataCell("0.0144", 1400), dataCell("0.4789", 1100), dataCell("\u2713", 1054),
+        dataCell("\u0413\u041E\u0421\u0422", 2750), dataCell("1 КБ", 1830), dataCell("0.2409", 2140), dataCell("0.1351", 2140), dataCell("0.0144", 2140), dataCell("0.4789", 1680), dataCell("\u2713", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("RC4", 1800), dataCell("1 КБ", 1200), dataCell("0.0001", 1400), dataCell("0.0000", 1400), dataCell("0.0001", 1400), dataCell("0.0001", 1100), dataCell("\u2717", 1054),
+        dataCell("RC4", 2750), dataCell("1 КБ", 1830), dataCell("0.0001", 2140), dataCell("0.0000", 2140), dataCell("0.0001", 2140), dataCell("0.0001", 1680), dataCell("\u2717", 1606),
       ]}),
       new TableRow({ children: [
-        dataCell("RC4", 1800), dataCell("10 КБ", 1200), dataCell("\u22480.0000", 1400), dataCell("0.0000", 1400), dataCell("\u22480.0000", 1400), dataCell("\u22480.0000", 1100), dataCell("\u2717", 1054),
+        dataCell("RC4", 2750), dataCell("10 КБ", 1830), dataCell("\u22480.0000", 2140), dataCell("0.0000", 2140), dataCell("\u22480.0000", 2140), dataCell("\u22480.0000", 1680), dataCell("\u2717", 1606),
       ]}),
     ],
   }));
@@ -1963,37 +1990,37 @@ function generateChapter4() {
   children.push(figureCaption("Метрики распределения байтов шифртекста", true));
 
   children.push(new Table({
-    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
-    columnWidths: [1800, 1600, 1600, 1600, 1600, 1154],
+    width: { size: LANDSCAPE_CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [2750, 2440, 2440, 2440, 2440, 1776],
     rows: [
       new TableRow({ children: [
-        headerCell("Алгоритм", 1800),
-        headerCell("Среднее", 1600),
-        headerCell("Дисперсия", 1600),
-        headerCell("Асимм.", 1600),
-        headerCell("Эксцесс", 1600),
-        headerCell("IC", 1154),
+        headerCell("Алгоритм", 2750),
+        headerCell("Среднее", 2440),
+        headerCell("Дисперсия", 2440),
+        headerCell("Асимм.", 2440),
+        headerCell("Эксцесс", 2440),
+        headerCell("IC", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("AES-256", 1800), dataCell("127.13", 1600), dataCell("5484.8", 1600), dataCell("0.0069", 1600), dataCell("\u20131.202", 1600), dataCell("0.00389", 1154),
+        dataCell("AES-256", 2750), dataCell("127.13", 2440), dataCell("5484.8", 2440), dataCell("0.0069", 2440), dataCell("\u20131.202", 2440), dataCell("0.00389", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("DES", 1800), dataCell("127.48", 1600), dataCell("5445.3", 1600), dataCell("0.0065", 1600), dataCell("\u20131.197", 1600), dataCell("0.00388", 1154),
+        dataCell("DES", 2750), dataCell("127.48", 2440), dataCell("5445.3", 2440), dataCell("0.0065", 2440), dataCell("\u20131.197", 2440), dataCell("0.00388", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("3DES", 1800), dataCell("127.34", 1600), dataCell("5450.5", 1600), dataCell("0.0037", 1600), dataCell("\u20131.196", 1600), dataCell("0.00391", 1154),
+        dataCell("3DES", 2750), dataCell("127.34", 2440), dataCell("5450.5", 2440), dataCell("0.0037", 2440), dataCell("\u20131.196", 2440), dataCell("0.00391", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("Blowfish", 1800), dataCell("127.59", 1600), dataCell("5422.6", 1600), dataCell("\u20130.006", 1600), dataCell("\u20131.189", 1600), dataCell("0.00389", 1154),
+        dataCell("Blowfish", 2750), dataCell("127.59", 2440), dataCell("5422.6", 2440), dataCell("\u20130.006", 2440), dataCell("\u20131.189", 2440), dataCell("0.00389", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("RC4", 1800), dataCell("127.25", 1600), dataCell("5438.0", 1600), dataCell("0.0038", 1600), dataCell("\u20131.198", 1600), dataCell("0.00391", 1154),
+        dataCell("RC4", 2750), dataCell("127.25", 2440), dataCell("5438.0", 2440), dataCell("0.0038", 2440), dataCell("\u20131.198", 2440), dataCell("0.00391", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("\u0413\u041E\u0421\u0422", 1800), dataCell("127.81", 1600), dataCell("5472.1", 1600), dataCell("\u20130.003", 1600), dataCell("\u20131.203", 1600), dataCell("0.00392", 1154),
+        dataCell("\u0413\u041E\u0421\u0422", 2750), dataCell("127.81", 2440), dataCell("5472.1", 2440), dataCell("\u20130.003", 2440), dataCell("\u20131.203", 2440), dataCell("0.00392", 1776),
       ]}),
       new TableRow({ children: [
-        dataCell("Идеал", 1800), dataCell("127.50", 1600), dataCell("5461.3", 1600), dataCell("0.000", 1600), dataCell("\u20131.200", 1600), dataCell("0.00390", 1154),
+        dataCell("Идеал", 2750), dataCell("127.50", 2440), dataCell("5461.3", 2440), dataCell("0.000", 2440), dataCell("\u20131.200", 2440), dataCell("0.00390", 1776),
       ]}),
     ],
   }));
@@ -2010,35 +2037,35 @@ function generateChapter4() {
   children.push(figureCaption("Итоговый рейтинг алгоритмов по комплексному показателю S_total", true));
 
   children.push(new Table({
-    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
-    columnWidths: [700, 1600, 1400, 1200, 1400, 1200, 1854],
+    width: { size: LANDSCAPE_CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [1070, 2440, 2140, 1830, 2140, 1830, 2836],
     rows: [
       new TableRow({ children: [
-        headerCell("Ранг", 700),
-        headerCell("Алгоритм", 1600),
-        headerCell("S_entropy", 1400),
-        headerCell("S_KL", 1200),
-        headerCell("S_avalanche", 1400),
-        headerCell("S_corr", 1200),
-        headerCell("S_total", 1854),
+        headerCell("Ранг", 1070),
+        headerCell("Алгоритм", 2440),
+        headerCell("S_entropy", 2140),
+        headerCell("S_KL", 1830),
+        headerCell("S_avalanche", 2140),
+        headerCell("S_corr", 1830),
+        headerCell("S_total", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("1", 700), dataCell("DES", 1600), dataCell("0.9919", 1400), dataCell("0.1048", 1200), dataCell("0.4764", 1400), dataCell("0.9965", 1200), dataCell("0.6424", 1854),
+        dataCell("1", 1070), dataCell("DES", 2440), dataCell("0.9919", 2140), dataCell("0.1048", 1830), dataCell("0.4764", 2140), dataCell("0.9965", 1830), dataCell("0.6424", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("2", 700), dataCell("AES-256", 1600), dataCell("0.9918", 1400), dataCell("0.0934", 1200), dataCell("0.4798", 1400), dataCell("0.9937", 1200), dataCell("0.6397", 1854),
+        dataCell("2", 1070), dataCell("AES-256", 2440), dataCell("0.9918", 2140), dataCell("0.0934", 1830), dataCell("0.4798", 2140), dataCell("0.9937", 1830), dataCell("0.6397", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("3", 700), dataCell("Blowfish", 1600), dataCell("0.9918", 1400), dataCell("0.0854", 1200), dataCell("0.4763", 1400), dataCell("0.9977", 1200), dataCell("0.6378", 1854),
+        dataCell("3", 1070), dataCell("Blowfish", 2440), dataCell("0.9918", 2140), dataCell("0.0854", 1830), dataCell("0.4763", 2140), dataCell("0.9977", 1830), dataCell("0.6378", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("4", 700), dataCell("3DES", 1600), dataCell("0.9913", 1400), dataCell("0.0350", 1200), dataCell("0.4762", 1400), dataCell("0.9955", 1200), dataCell("0.6245", 1854),
+        dataCell("4", 1070), dataCell("3DES", 2440), dataCell("0.9913", 2140), dataCell("0.0350", 1830), dataCell("0.4762", 2140), dataCell("0.9955", 1830), dataCell("0.6245", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("5", 700), dataCell("\u0413\u041E\u0421\u0422", 1600), dataCell("0.9910", 1400), dataCell("\u22480.000", 1200), dataCell("0.4765", 1400), dataCell("0.9964", 1200), dataCell("0.6160", 1854),
+        dataCell("5", 1070), dataCell("\u0413\u041E\u0421\u0422", 2440), dataCell("0.9910", 2140), dataCell("\u22480.000", 1830), dataCell("0.4765", 2140), dataCell("0.9964", 1830), dataCell("0.6160", 2836),
       ]}),
       new TableRow({ children: [
-        dataCell("6", 700), dataCell("RC4", 1600), dataCell("0.9912", 1400), dataCell("0.0194", 1200), dataCell("0.0001", 1400), dataCell("0.9982", 1200), dataCell("0.5022", 1854),
+        dataCell("6", 1070), dataCell("RC4", 2440), dataCell("0.9912", 2140), dataCell("0.0194", 1830), dataCell("0.0001", 2140), dataCell("0.9982", 1830), dataCell("0.5022", 2836),
       ]}),
     ],
   }));
@@ -2120,7 +2147,7 @@ function generateChapter4() {
   children.push(listItem("Формирование итогового шифртекста (IV + зашифрованные данные для блочных шифров).", { numbered: true, listRef: nlist8 }));
   children.push(listItem("Верификация: дешифрование и проверка совпадения с исходным текстом.", { numbered: true, listRef: nlist8 }));
 
-  children.push(normalParagraph("Трассировка наглядно демонстрирует рост энтропии на этапе шифрования: входной текст с энтропией H \u2248 4.0 бит/байт преобразуется в шифртекст с H \u2248 7.9 бит/байт, что подтверждает качественную работу алгоритма."));
+  children.push(normalParagraph("Трассировка наглядно демонстрирует рост энтропии на этапе шифрования (рис. 4.1): входной текст с энтропией H \u2248 4.0 бит/байт преобразуется в шифртекст с H \u2248 7.9 бит/байт, что подтверждает качественную работу алгоритма."));
 
   // Скриншот трассировки
   children.push(screenshotImage("07_trace.png", 16));
@@ -2145,7 +2172,7 @@ function generateChapter4() {
     { text: "\u2014 машиночитаемый формат для программной обработки. Содержит полную структуру результатов с сохранением вложенности." },
   ], { listRef: list12 }));
 
-  children.push(normalParagraph("Генерация отчета выполняется через интерфейс (вкладка «Отчет») или через API (POST /api/reports/generate). Отчет формируется на основе результатов последнего проведенного эксперимента."));
+  children.push(normalParagraph("Генерация отчета выполняется через интерфейс (вкладка «Отчёт», рис. 4.2) или через API (POST /api/reports/generate). Отчет формируется на основе результатов последнего проведенного эксперимента."));
 
   children.push(screenshotImage("08_report.png", 16));
   children.push(figureCaption("Вкладка «Отчёт» — генерация исследовательского отчёта"));
@@ -2557,8 +2584,8 @@ async function main() {
 
   const landscapeProps = {
     page: {
-      size: { width: PAGE_HEIGHT, height: PAGE_WIDTH, orientation: PageOrientation.LANDSCAPE },
-      margin: { top: MARGIN_RIGHT, bottom: MARGIN_LEFT, left: MARGIN_TOP, right: MARGIN_BOTTOM },
+      size: { width: PAGE_WIDTH, height: PAGE_HEIGHT, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGIN_TOP, bottom: MARGIN_BOTTOM, left: MARGIN_LEFT, right: MARGIN_RIGHT },
     },
   };
 
