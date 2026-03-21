@@ -17,6 +17,7 @@ jobs:
           command_timeout: 30m
           script: |
             cd ~/app
+            git sparse-checkout set --no-cone '/*' '!docs'
             git fetch origin main
             git reset --hard origin/main
             docker compose up -d --build
