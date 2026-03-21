@@ -5,7 +5,8 @@ const {
   Header, Footer, AlignmentType, LevelFormat, ImageRun,
   HeadingLevel, BorderStyle, WidthType, ShadingType,
   PageNumber, PageBreak, TabStopType, TabStopPosition,
-  TableOfContents
+  TableOfContents, Math: OfficeMath, MathRun, SectionType,
+  PageOrientation
 } = require("docx");
 
 // ==================== FORMATTING CONSTANTS ====================
@@ -25,6 +26,54 @@ const FONT_SIZE_SMALL = 24; // 12pt
 // Line spacing
 const LINE_SPACING = 360;   // 1.5 line spacing (240 = single, 360 = 1.5, 480 = double)
 const FIRST_LINE_INDENT = 720; // 1.27cm paragraph indent
+
+// ==================== LIST NUMBERING ====================
+// Each distinct block of listItem() calls gets its own numbering reference
+// so that numbering restarts between separate list blocks.
+let bulletListCounter = 0;
+let numberedListCounter = 0;
+
+function newBulletList() {
+  bulletListCounter++;
+  return `bulletList_${bulletListCounter}`;
+}
+
+function newNumberedList() {
+  numberedListCounter++;
+  return `numberedList_${numberedListCounter}`;
+}
+
+function generateNumberingConfigs() {
+  const configs = [];
+  for (let i = 1; i <= bulletListCounter; i++) {
+    configs.push({
+      reference: `bulletList_${i}`,
+      levels: [{
+        level: 0, format: LevelFormat.BULLET, text: "\u2013", alignment: AlignmentType.LEFT,
+        style: { paragraph: { indent: { left: 1080, hanging: 360 } } },
+      }],
+    });
+  }
+  for (let i = 1; i <= numberedListCounter; i++) {
+    configs.push({
+      reference: `numberedList_${i}`,
+      levels: [{
+        level: 0, format: LevelFormat.DECIMAL, text: "%1)", alignment: AlignmentType.LEFT,
+        style: { paragraph: { indent: { left: 1080, hanging: 360 } } },
+      }],
+    });
+  }
+  return configs;
+}
+
+// ==================== LANDSCAPE SECTION MARKER ====================
+// Marker object to wrap content in landscape sections
+const LANDSCAPE_START = { __landscapeMarker: "start" };
+const LANDSCAPE_END = { __landscapeMarker: "end" };
+
+function isLandscapeMarker(item) {
+  return item && item.__landscapeMarker;
+}
 
 // ==================== HELPER FUNCTIONS ====================
 
@@ -126,8 +175,9 @@ function listItem(text, options = {}) {
       }
     });
   }
+  const ref = options.listRef || (options.numbered ? "numberedList" : "bulletList");
   return new Paragraph({
-    numbering: { reference: options.numbered ? "numberedList" : "bulletList", level: options.level || 0 },
+    numbering: { reference: ref, level: options.level || 0 },
     spacing: { after: 0, line: LINE_SPACING },
     children: runs,
   });
@@ -261,22 +311,23 @@ function generateChapter1() {
     { text: ". Различают несколько видов криптоанализа:" },
   ]));
 
+  const list1 = newBulletList();
   children.push(listItem([
     { text: "силовой перебор (brute-force)", italics: true },
     { text: " \u2013 полный перебор всех возможных ключей; сложность определяется длиной ключа;" },
-  ]));
+  ], { listRef: list1 }));
   children.push(listItem([
     { text: "дифференциальный криптоанализ", italics: true },
     { text: " \u2013 анализ влияния различий в открытых текстах на различия в шифртекстах;" },
-  ]));
+  ], { listRef: list1 }));
   children.push(listItem([
     { text: "линейный криптоанализ", italics: true },
     { text: " \u2013 поиск линейных соотношений между битами открытого текста, шифртекста и ключа;" },
-  ]));
+  ], { listRef: list1 }));
   children.push(listItem([
     { text: "алгебраический криптоанализ", italics: true },
     { text: " \u2013 представление шифра в виде системы алгебраических уравнений и их решение." },
-  ]));
+  ], { listRef: list1 }));
 
   children.push(normalParagraph([
     { text: "Понятие вычислительной стойкости предполагает, что алгоритм является стойким, если для его взлома требуются вычислительные ресурсы, превышающие практически доступные" },
@@ -416,11 +467,11 @@ function generateChapter1() {
     children: cells.map((text, i) => new TableCell({
       borders,
       margins: cellMargins,
-      shading: { fill: "D9E2F3", type: ShadingType.CLEAR },
       width: { size: [1800, 1200, 1200, 1200, 1200, 1200, 1554][i], type: WidthType.DXA },
       children: [new Paragraph({
         alignment: AlignmentType.CENTER,
         spacing: { after: 0, line: 240 },
+        indent: { firstLine: 0 },
         children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
       })],
     })),
@@ -439,6 +490,7 @@ function generateChapter1() {
     })),
   });
 
+  children.push(LANDSCAPE_START);
   children.push(figureCaption("Характеристики исследуемых алгоритмов шифрования", true));
 
   children.push(new Table({
@@ -455,6 +507,7 @@ function generateChapter1() {
       dataRow(["\u0413\u041E\u0421\u0422", "Блочный", "256", "64", "32", "Фейстель", "1989"]),
     ],
   }));
+  children.push(LANDSCAPE_END);
 
   // === 1.3 ===
   children.push(heading2("1.3.", "Существующие подходы к оценке криптостойкости"));
@@ -532,20 +585,21 @@ function generateChapter1() {
 
   children.push(normalParagraph("Существует ряд программных средств, предоставляющих возможности для анализа криптографических алгоритмов:"));
 
+  const list2 = newBulletList();
   children.push(listItem([
     { text: "CrypTool", bold: true },
     { text: " \u2013 образовательная платформа для изучения криптографии и криптоанализа, поддерживающая визуализацию работы алгоритмов и базовый статистический анализ;" },
-  ]));
+  ], { listRef: list2 }));
 
   children.push(listItem([
     { text: "SageMath", bold: true },
     { text: " \u2013 открытая математическая система с модулями для криптографии, позволяющая реализовывать и анализировать алгоритмы на уровне математических примитивов;" },
-  ]));
+  ], { listRef: list2 }));
 
   children.push(listItem([
     { text: "NIST Statistical Test Suite", bold: true },
     { text: " \u2013 набор из 15 тестов для проверки случайности последовательностей, являющийся отраслевым стандартом, но ограниченный бинарными результатами." },
-  ]));
+  ], { listRef: list2 }));
 
   children.push(normalParagraph("Анализ существующих решений показывает, что ни одно из них не предоставляет комплексного инструмента для оценки криптостойкости, объединяющего энтропийные метрики (энтропия Шеннона, KL-дивергенция, условная энтропия, взаимная информация), статистические тесты (частотный анализ, корреляционный анализ, метрики распределения) и тест лавинного эффекта в единой среде с возможностью ранжирования алгоритмов и визуализацией результатов. Это определяет необходимость разработки специализированной программной платформы."));
 
@@ -554,21 +608,23 @@ function generateChapter1() {
 
   children.push(normalParagraph("На основе проведенного анализа можно сформулировать следующие выводы, определяющие направление исследования:"));
 
-  children.push(listItem("существующие формальные методы оценки криптостойкости дают бинарный результат и не позволяют ранжировать алгоритмы;", { numbered: true }));
-  children.push(listItem("стандартные статистические тесты (NIST SP 800-22) также имеют бинарный характер результатов;", { numbered: true }));
-  children.push(listItem("энтропийный анализ обеспечивает количественную оценку, имеет теоретическое обоснование в работах Шеннона, но не используется комплексно;", { numbered: true }));
-  children.push(listItem("отсутствует интегрированный инструмент, объединяющий энтропийные метрики, статистические тесты и тест лавинного эффекта.", { numbered: true }));
+  const nlist1 = newNumberedList();
+  children.push(listItem("существующие формальные методы оценки криптостойкости дают бинарный результат и не позволяют ранжировать алгоритмы;", { numbered: true, listRef: nlist1 }));
+  children.push(listItem("стандартные статистические тесты (NIST SP 800-22) также имеют бинарный характер результатов;", { numbered: true, listRef: nlist1 }));
+  children.push(listItem("энтропийный анализ обеспечивает количественную оценку, имеет теоретическое обоснование в работах Шеннона, но не используется комплексно;", { numbered: true, listRef: nlist1 }));
+  children.push(listItem("отсутствует интегрированный инструмент, объединяющий энтропийные метрики, статистические тесты и тест лавинного эффекта.", { numbered: true, listRef: nlist1 }));
 
   children.push(normalParagraph("Данные выводы обосновывают актуальность разработки комплексной методики оценки криптостойкости на основе энтропийного анализа и создания соответствующего программного инструмента."));
 
   children.push(normalParagraph("Для разрабатываемой программной платформы определены следующие ключевые требования:"));
 
-  children.push(listItem("поддержка множества алгоритмов шифрования (блочных и потоковых);"));
-  children.push(listItem("использование различных типов входных данных для всестороннего анализа;"));
-  children.push(listItem("расчет комплекса энтропийных и статистических метрик;"));
-  children.push(listItem("проведение теста лавинного эффекта;"));
-  children.push(listItem("агрегация результатов и ранжирование алгоритмов;"));
-  children.push(listItem("визуализация результатов и генерация отчетов."));
+  const list3 = newBulletList();
+  children.push(listItem("поддержка множества алгоритмов шифрования (блочных и потоковых);", { listRef: list3 }));
+  children.push(listItem("использование различных типов входных данных для всестороннего анализа;", { listRef: list3 }));
+  children.push(listItem("расчет комплекса энтропийных и статистических метрик;", { listRef: list3 }));
+  children.push(listItem("проведение теста лавинного эффекта;", { listRef: list3 }));
+  children.push(listItem("агрегация результатов и ранжирование алгоритмов;", { listRef: list3 }));
+  children.push(listItem("визуализация результатов и генерация отчетов.", { listRef: list3 }));
 
   // === 1.5 ===
   children.push(heading2("1.5.", "Выводы по главе"));
@@ -598,12 +654,13 @@ function generateChapter1() {
     { text: ":" },
   ]));
 
-  children.push(listItem("анализ существующих подходов к оценке криптостойкости алгоритмов шифрования и выявление их ограничений;"));
-  children.push(listItem("исследование и систематизация энтропийных метрик, применимых для оценки криптостойкости;"));
-  children.push(listItem("разработка комплексной методики оценки криптостойкости, объединяющей энтропийные метрики со статистическими тестами и тестом лавинного эффекта;"));
-  children.push(listItem("проектирование и разработка программной платформы CryptoAnalyzer для автоматизированного анализа криптостойкости;"));
-  children.push(listItem("экспериментальная проверка разработанной методики на семи алгоритмах шифрования с различными типами входных данных;"));
-  children.push(listItem("сравнительный анализ результатов и формулирование рекомендаций по выбору алгоритмов шифрования."));
+  const list4 = newBulletList();
+  children.push(listItem("анализ существующих подходов к оценке криптостойкости алгоритмов шифрования и выявление их ограничений;", { listRef: list4 }));
+  children.push(listItem("исследование и систематизация энтропийных метрик, применимых для оценки криптостойкости;", { listRef: list4 }));
+  children.push(listItem("разработка комплексной методики оценки криптостойкости, объединяющей энтропийные метрики со статистическими тестами и тестом лавинного эффекта;", { listRef: list4 }));
+  children.push(listItem("проектирование и разработка программной платформы CryptoAnalyzer для автоматизированного анализа криптостойкости;", { listRef: list4 }));
+  children.push(listItem("экспериментальная проверка разработанной методики на семи алгоритмах шифрования с различными типами входных данных;", { listRef: list4 }));
+  children.push(listItem("сравнительный анализ результатов и формулирование рекомендаций по выбору алгоритмов шифрования.", { listRef: list4 }));
 
   return children;
 }
@@ -615,19 +672,23 @@ function formula(text) {
     spacing: { before: 120, after: 120, line: LINE_SPACING },
     alignment: AlignmentType.CENTER,
     indent: { firstLine: 0 },
-    children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE, italics: true })],
+    children: [
+      new OfficeMath({
+        children: [new MathRun(text)],
+      }),
+    ],
   });
 }
 
 function formulaNumbered(text, number) {
   return new Paragraph({
     spacing: { before: 120, after: 120, line: LINE_SPACING },
+    alignment: AlignmentType.CENTER,
     indent: { firstLine: 0 },
-    tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
     children: [
-      new TextRun({ text: "\t", font: "Times New Roman", size: FONT_SIZE }),
-      new TextRun({ text, font: "Times New Roman", size: FONT_SIZE, italics: true }),
-      new TextRun({ text: `\t(${number})`, font: "Times New Roman", size: FONT_SIZE }),
+      new OfficeMath({
+        children: [new MathRun(text)],
+      }),
     ],
   });
 }
@@ -658,9 +719,10 @@ function generateChapter2() {
 
   children.push(normalParagraph("Энтропия обладает следующими свойствами:"));
 
-  children.push(listItem("неотрицательность: H(X) \u2265 0;"));
-  children.push(listItem("H(X) = 0 тогда и только тогда, когда одно из значений имеет вероятность 1 (полная определенность);"));
-  children.push(listItem("максимум достигается при равномерном распределении: H(X) \u2264 log\u2082(n), причем равенство выполняется при p(x\u1d62) = 1/n для всех i."));
+  const list5 = newBulletList();
+  children.push(listItem("неотрицательность: H(X) \u2265 0;", { listRef: list5 }));
+  children.push(listItem("H(X) = 0 тогда и только тогда, когда одно из значений имеет вероятность 1 (полная определенность);", { listRef: list5 }));
+  children.push(listItem("максимум достигается при равномерном распределении: H(X) \u2264 log\u2082(n), причем равенство выполняется при p(x\u1d62) = 1/n для всех i.", { listRef: list5 }));
 
   children.push(normalParagraph("Для байтовой последовательности (n = 256 возможных значений) максимальная энтропия составляет:"));
 
@@ -678,18 +740,19 @@ function generateChapter2() {
 
   children.push(normalParagraph("В реальных криптосистемах используется понятие вычислительной стойкости: алгоритм считается стойким, если не существует полиномиального алгоритма, способного отличить шифртекст от случайной последовательности с вероятностью, существенно превышающей 1/2. Это приводит к следующим информационно-теоретическим критериям качественного шифра:"));
 
+  const nlist2 = newNumberedList();
   children.push(listItem([
     { text: "равномерность распределения шифртекста", bold: true },
     { text: ": распределение байтов шифртекста должно быть максимально близко к равномерному, что соответствует максимальной энтропии H(C) \u2192 H\u2098\u2090\u2093 = 8 бит/байт;" },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist2 }));
   children.push(listItem([
     { text: "статистическая независимость от открытого текста", bold: true },
     { text: ": знание открытого текста не должно давать информации о шифртексте \u2013 взаимная информация I(M; C) должна стремиться к нулю;" },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist2 }));
   children.push(listItem([
     { text: "отсутствие автокорреляции", bold: true },
     { text: ": последовательные байты шифртекста не должны быть статистически зависимы." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist2 }));
 
   children.push(normalParagraph("Эти критерии, сформулированные на языке теории информации, ложатся в основу разрабатываемой методики оценки криптостойкости."));
 
@@ -718,9 +781,10 @@ function generateChapter2() {
   children.push(normalParagraph("принимающий значения в диапазоне [0, 1]. Значение S\u2091\u2099\u209c\u2063\u2099\u2092\u209a\u2099 = 1 соответствует идеальному равномерному распределению."));
 
   children.push(normalParagraph("Интерпретация результатов:"));
-  children.push(listItem("H(C) \u2265 7.9 бит/байт \u2013 хороший шифр, распределение близко к равномерному;"));
-  children.push(listItem("H(C) < 7.0 бит/байт \u2013 слабый шифр, в шифртексте присутствуют статистические закономерности;"));
-  children.push(listItem("H(C) = 8.0 \u2013 идеальный случай, теоретически недостижимый для конечных последовательностей."));
+  const list6 = newBulletList();
+  children.push(listItem("H(C) \u2265 7.9 бит/байт \u2013 хороший шифр, распределение близко к равномерному;", { listRef: list6 }));
+  children.push(listItem("H(C) < 7.0 бит/байт \u2013 слабый шифр, в шифртексте присутствуют статистические закономерности;", { listRef: list6 }));
+  children.push(listItem("H(C) = 8.0 \u2013 идеальный случай, теоретически недостижимый для конечных последовательностей.", { listRef: list6 }));
 
   children.push(normalParagraph("Дополнительно проводится анализ энтропии по блокам: входная последовательность разбивается на блоки фиксированного размера (по умолчанию 256 байт), и для каждого блока вычисляется энтропия. Равномерность значений энтропии по блокам свидетельствует об однородности шифрования по всей длине данных."));
 
@@ -806,11 +870,12 @@ function generateChapter2() {
 
   children.push(normalParagraph("Дополнительные статистические характеристики распределения байтов шифртекста включают:"));
 
-  children.push(listItem("математическое ожидание \u03BC = (1/N) \u00B7 \u2211c\u1d62 (идеал: 127.5);"));
-  children.push(listItem("дисперсия \u03C3\u00B2 (идеал для U(0,255): 5461.25);"));
-  children.push(listItem("коэффициент асимметрии (skewness) \u03B3\u2081 (идеал: 0);"));
-  children.push(listItem("эксцесс (kurtosis) \u03B3\u2082 (идеал для равномерного: \u22121.2);"));
-  children.push(listItem("индекс совпадения IC \u2248 1/256 \u2248 0.00390 для случайных данных."));
+  const list7 = newBulletList();
+  children.push(listItem("математическое ожидание \u03BC = (1/N) \u00B7 \u2211c\u1d62 (идеал: 127.5);", { listRef: list7 }));
+  children.push(listItem("дисперсия \u03C3\u00B2 (идеал для U(0,255): 5461.25);", { listRef: list7 }));
+  children.push(listItem("коэффициент асимметрии (skewness) \u03B3\u2081 (идеал: 0);", { listRef: list7 }));
+  children.push(listItem("эксцесс (kurtosis) \u03B3\u2082 (идеал для равномерного: \u22121.2);", { listRef: list7 }));
+  children.push(listItem("индекс совпадения IC \u2248 1/256 \u2248 0.00390 для случайных данных.", { listRef: list7 }));
 
   // === 2.4 ===
   children.push(heading2("2.4.", "Тест лавинного эффекта"));
@@ -852,35 +917,36 @@ function generateChapter2() {
 
   children.push(normalParagraph("Предлагаемая комплексная методика включает шесть этапов:"));
 
+  const nlist3 = newNumberedList();
   children.push(listItem([
     { text: "Этап 1. Генерация тестовых данных. ", bold: true },
     { text: "Для каждого алгоритма генерируются 7 типов входных данных, покрывающих весь спектр энтропии: нулевые байты (H = 0), повторяющийся паттерн (H \u2248 2.0), структурированные данные (H \u2248 3.5), текст (H \u2248 4.5), изображение (H \u2248 5.5), счетчик (H = 8.0) и криптографически случайные данные (H \u2248 8.0)." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(listItem([
     { text: "Этап 2. Шифрование. ", bold: true },
     { text: "Каждый набор данных шифруется каждым алгоритмом с фиксацией времени." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(listItem([
     { text: "Этап 3. Расчет энтропийных метрик: ", bold: true },
     { text: "H(C), D\u2096\u2097(P\u2016U), H(C|M), I(M;C)." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(listItem([
     { text: "Этап 4. Расчет статистических метрик: ", bold: true },
     { text: "\u03C7\u00B2, корреляции, метрики распределения." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(listItem([
     { text: "Этап 5. Тест лавинного эффекта ", bold: true },
     { text: "(100 итераций для каждого алгоритма)." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(listItem([
     { text: "Этап 6. Агрегация и ранжирование ", bold: true },
     { text: "по комплексному показателю." },
-  ], { numbered: true }));
+  ], { numbered: true, listRef: nlist3 }));
 
   children.push(normalParagraph("Комплексный показатель криптостойкости вычисляется как среднее арифметическое четырех нормализованных частных баллов:"));
 
@@ -916,33 +982,35 @@ function generateChapter3() {
 
   children.push(normalParagraph("К разрабатываемой системе предъявляются следующие функциональные требования:", { bold: true }));
 
-  children.push(listItem("Поддержка шести алгоритмов шифрования: AES-256, DES, 3DES, Blowfish, RC4, ГОСТ 28147-89. Система должна обеспечивать шифрование и дешифрование данных каждым из перечисленных алгоритмов с корректной генерацией ключей.", "numbered"));
+  const nlist4 = newNumberedList();
+  children.push(listItem("Поддержка шести алгоритмов шифрования: AES-256, DES, 3DES, Blowfish, RC4, ГОСТ 28147-89. Система должна обеспечивать шифрование и дешифрование данных каждым из перечисленных алгоритмов с корректной генерацией ключей.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Генерация семи типов тестовых данных различной энтропии: нулевые байты (H = 0), бинарный паттерн (H \u2248 2.0), структурированные данные (H \u2248 3.5\u20134.0), естественный текст (H \u2248 4.0\u20134.5), изображение (H \u2248 5.0\u20136.0), инкрементальная последовательность (H = 8.0), криптографически случайные данные (H \u2248 8.0). Тестовые данные генерируются в размерах 1 КБ, 10 КБ и 100 КБ.", "numbered"));
+  children.push(listItem("Генерация семи типов тестовых данных различной энтропии: нулевые байты (H = 0), бинарный паттерн (H \u2248 2.0), структурированные данные (H \u2248 3.5\u20134.0), естественный текст (H \u2248 4.0\u20134.5), изображение (H \u2248 5.0\u20136.0), инкрементальная последовательность (H = 8.0), криптографически случайные данные (H \u2248 8.0). Тестовые данные генерируются в размерах 1 КБ, 10 КБ и 100 КБ.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Расчет четырех энтропийных метрик: энтропия Шеннона, расхождение Кульбака-Лейблера, условная энтропия и взаимная информация.", "numbered"));
+  children.push(listItem("Расчет четырех энтропийных метрик: энтропия Шеннона, расхождение Кульбака-Лейблера, условная энтропия и взаимная информация.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Расчет статистических показателей: частотный анализ (критерий хи-квадрат), корреляционный анализ (коэффициенты Пирсона и Спирмена), профиль автокорреляции, метрики распределения (среднее, дисперсия, асимметрия, эксцесс, индекс совпадения).", "numbered"));
+  children.push(listItem("Расчет статистических показателей: частотный анализ (критерий хи-квадрат), корреляционный анализ (коэффициенты Пирсона и Спирмена), профиль автокорреляции, метрики распределения (среднее, дисперсия, асимметрия, эксцесс, индекс совпадения).", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Проведение теста лавинного эффекта с настраиваемым количеством итераций (по умолчанию 100).", "numbered"));
+  children.push(listItem("Проведение теста лавинного эффекта с настраиваемым количеством итераций (по умолчанию 100).", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Ранжирование алгоритмов по комплексному показателю криптостойкости S\u209c\u2092\u209c\u2090\u2097.", "numbered"));
+  children.push(listItem("Ранжирование алгоритмов по комплексному показателю криптостойкости S\u209c\u2092\u209c\u2090\u2097.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Визуализация результатов в виде интерактивных графиков и таблиц.", "numbered"));
+  children.push(listItem("Визуализация результатов в виде интерактивных графиков и таблиц.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Экспорт отчетов в форматах Markdown, CSV и JSON.", "numbered"));
+  children.push(listItem("Экспорт отчетов в форматах Markdown, CSV и JSON.", { numbered: true, listRef: nlist4 }));
 
-  children.push(listItem("Пошаговая трассировка процесса шифрования с отображением промежуточных состояний данных на каждом этапе.", "numbered"));
+  children.push(listItem("Пошаговая трассировка процесса шифрования с отображением промежуточных состояний данных на каждом этапе.", { numbered: true, listRef: nlist4 }));
 
   children.push(normalParagraph("К нефункциональным требованиям относятся:", { bold: true }));
 
-  children.push(listItem("Веб-доступность \u2014 система должна быть доступна через браузерный интерфейс без установки дополнительного программного обеспечения.", "numbered"));
+  const nlist5 = newNumberedList();
+  children.push(listItem("Веб-доступность \u2014 система должна быть доступна через браузерный интерфейс без установки дополнительного программного обеспечения.", { numbered: true, listRef: nlist5 }));
 
-  children.push(listItem("Контейнеризация \u2014 развертывание системы должно осуществляться с помощью Docker Compose, обеспечивая воспроизводимость окружения.", "numbered"));
+  children.push(listItem("Контейнеризация \u2014 развертывание системы должно осуществляться с помощью Docker Compose, обеспечивая воспроизводимость окружения.", { numbered: true, listRef: nlist5 }));
 
-  children.push(listItem("Расширяемость \u2014 архитектура должна допускать добавление новых алгоритмов шифрования без изменения существующего кода.", "numbered"));
+  children.push(listItem("Расширяемость \u2014 архитектура должна допускать добавление новых алгоритмов шифрования без изменения существующего кода.", { numbered: true, listRef: nlist5 }));
 
-  children.push(listItem("Кроссплатформенность \u2014 система должна функционировать в операционных системах Windows, Linux и macOS.", "numbered"));
+  children.push(listItem("Кроссплатформенность \u2014 система должна функционировать в операционных системах Windows, Linux и macOS.", { numbered: true, listRef: nlist5 }));
 
   // 3.2
   children.push(heading2("3.2.", "Архитектура системы и выбор средств разработки"));
@@ -951,10 +1019,11 @@ function generateChapter3() {
 
   children.push(normalParagraph("Для реализации платформы CryptoAnalyzer была выбрана клиент-серверная архитектура с разделением на серверную часть (backend) и клиентскую часть (frontend). Данное решение обусловлено следующими факторами:"));
 
-  children.push(listItem("вычислительно интенсивные криптографические операции и статистические расчеты выполняются на сервере, что не предъявляет требований к производительности клиентского устройства;"));
-  children.push(listItem("визуализация результатов и взаимодействие с пользователем реализуются на стороне клиента, обеспечивая отзывчивый интерфейс;"));
-  children.push(listItem("REST API сервера может быть использовано другими клиентами (скрипты, другие приложения), что обеспечивает переиспользование вычислительной логики;"));
-  children.push(listItem("независимое масштабирование серверной и клиентской частей."));
+  const list8 = newBulletList();
+  children.push(listItem("вычислительно интенсивные криптографические операции и статистические расчеты выполняются на сервере, что не предъявляет требований к производительности клиентского устройства;", { listRef: list8 }));
+  children.push(listItem("визуализация результатов и взаимодействие с пользователем реализуются на стороне клиента, обеспечивая отзывчивый интерфейс;", { listRef: list8 }));
+  children.push(listItem("REST API сервера может быть использовано другими клиентами (скрипты, другие приложения), что обеспечивает переиспользование вычислительной логики;", { listRef: list8 }));
+  children.push(listItem("независимое масштабирование серверной и клиентской частей.", { listRef: list8 }));
 
   children.push(normalParagraph("Взаимодействие между компонентами осуществляется по протоколу HTTP через REST API. Веб-сервер Nginx выполняет роль обратного прокси, маршрутизируя запросы к статическим файлам фронтенда или к API бэкенда."));
 
@@ -962,8 +1031,9 @@ function generateChapter3() {
 
   children.push(normalParagraph("Система развертывается с использованием Docker Compose и включает два контейнера:"));
 
-  children.push(listItem("Frontend (Nginx, порт 80) \u2014 обслуживает статические файлы React-приложения и проксирует API-запросы;"));
-  children.push(listItem("Backend (Uvicorn, порт 8000) \u2014 обрабатывает REST API запросы, выполняет криптографические вычисления."));
+  const list9 = newBulletList();
+  children.push(listItem("Frontend (Nginx, порт 80) \u2014 обслуживает статические файлы React-приложения и проксирует API-запросы;", { listRef: list9 }));
+  children.push(listItem("Backend (Uvicorn, порт 8000) \u2014 обрабатывает REST API запросы, выполняет криптографические вычисления.", { listRef: list9 }));
 
   children.push(normalParagraph("Пользователь взаимодействует с системой через веб-браузер, отправляя запросы к Nginx, который перенаправляет API-запросы (с префиксом /api) к серверу Uvicorn."));
 
@@ -1035,13 +1105,12 @@ function generateChapter3() {
     return new TableCell({
       borders: techBorders,
       width: { size: width, type: WidthType.DXA },
-      shading: { fill: "D9E2F3", type: ShadingType.CLEAR },
       margins: techCellMargins,
       children: [new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 0, line: LINE_SPACING },
+        spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
-        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE, bold: true })],
+        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
       })],
     });
   }
@@ -1052,9 +1121,9 @@ function generateChapter3() {
       width: { size: width, type: WidthType.DXA },
       margins: techCellMargins,
       children: [new Paragraph({
-        spacing: { after: 0, line: LINE_SPACING },
+        spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
-        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE })],
+        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL })],
       })],
     });
   }
@@ -1366,12 +1435,13 @@ function generateChapter3() {
 
   children.push(normalParagraph("Центральным элементом архитектуры является иерархия классов шифрования, построенная на основе паттерна «Стратегия». Абстрактный базовый класс BaseCipher определяет интерфейс:"));
 
-  children.push(listItem("name (property) \u2014 название алгоритма;"));
-  children.push(listItem("generate_key() \u2014 генерация криптографического ключа;"));
-  children.push(listItem("encrypt(data, key) \u2014 шифрование данных;"));
-  children.push(listItem("decrypt(data, key) \u2014 дешифрование данных;"));
-  children.push(listItem("encrypt_deterministic(data, key, iv) \u2014 детерминированное шифрование с заданным IV;"));
-  children.push(listItem("encrypt_timed(data, key) \u2014 шифрование с замером времени."));
+  const list10 = newBulletList();
+  children.push(listItem("name (property) \u2014 название алгоритма;", { listRef: list10 }));
+  children.push(listItem("generate_key() \u2014 генерация криптографического ключа;", { listRef: list10 }));
+  children.push(listItem("encrypt(data, key) \u2014 шифрование данных;", { listRef: list10 }));
+  children.push(listItem("decrypt(data, key) \u2014 дешифрование данных;", { listRef: list10 }));
+  children.push(listItem("encrypt_deterministic(data, key, iv) \u2014 детерминированное шифрование с заданным IV;", { listRef: list10 }));
+  children.push(listItem("encrypt_timed(data, key) \u2014 шифрование с замером времени.", { listRef: list10 }));
 
   children.push(normalParagraph("От BaseCipher наследуются шесть конкретных классов:"));
 
@@ -1423,14 +1493,15 @@ function generateChapter3() {
 
   children.push(normalParagraph("Процесс проведения эксперимента включает следующие взаимодействия:"));
 
-  children.push(listItem("Пользователь настраивает параметры в интерфейсе и нажимает «Запустить».", "numbered"));
-  children.push(listItem("Frontend отправляет POST-запрос к /api/experiments/run с параметрами.", "numbered"));
-  children.push(listItem("Backend валидирует входные данные.", "numbered"));
-  children.push(listItem("Для каждой комбинации (алгоритм \u00d7 тип данных \u00d7 размер): Data Generation генерирует данные, Encryption шифрует с замером времени, Entropy Analysis и Statistical Analysis вычисляют метрики.", "numbered"));
-  children.push(listItem("Для каждой комбинации (алгоритм \u00d7 размер): Avalanche Test проводит серию тестов.", "numbered"));
-  children.push(listItem("Analytics агрегирует результаты и ранжирует алгоритмы.", "numbered"));
-  children.push(listItem("Backend возвращает ExperimentResponse клиенту.", "numbered"));
-  children.push(listItem("Frontend отображает результаты на вкладках интерфейса.", "numbered"));
+  const nlist6 = newNumberedList();
+  children.push(listItem("Пользователь настраивает параметры в интерфейсе и нажимает «Запустить».", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Frontend отправляет POST-запрос к /api/experiments/run с параметрами.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Backend валидирует входные данные.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Для каждой комбинации (алгоритм \u00d7 тип данных \u00d7 размер): Data Generation генерирует данные, Encryption шифрует с замером времени, Entropy Analysis и Statistical Analysis вычисляют метрики.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Для каждой комбинации (алгоритм \u00d7 размер): Avalanche Test проводит серию тестов.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Analytics агрегирует результаты и ранжирует алгоритмы.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Backend возвращает ExperimentResponse клиенту.", { numbered: true, listRef: nlist6 }));
+  children.push(listItem("Frontend отображает результаты на вкладках интерфейса.", { numbered: true, listRef: nlist6 }));
 
   // Рисунок — диаграмма последовательности
   children.push(diagramImage("sequence_diagram.png", 16));
@@ -1480,13 +1551,14 @@ function generateChapter3() {
     { text: "\u2014 занимает правую часть экрана, содержит семь вкладок с результатами:" },
   ]));
 
-  children.push(listItem("Обзор \u2014 сводные карточки (лучший алгоритм, средняя энтропия, средний лавинный коэффициент) и таблица рейтинга;"));
-  children.push(listItem("Энтропия \u2014 столбчатая диаграмма средней энтропии по алгоритмам и линейный график зависимости энтропии от размера данных;"));
-  children.push(listItem("Лавинный эффект \u2014 столбчатая диаграмма с планками ошибок и референсной линией на уровне 0.5;"));
-  children.push(listItem("Распределение \u2014 визуализация статистических метрик распределения байтов;"));
-  children.push(listItem("Сравнение \u2014 сравнительный анализ алгоритмов по различным метрикам;"));
-  children.push(listItem("Трассировка \u2014 пошаговая визуализация процесса шифрования с отображением данных на каждом этапе;"));
-  children.push(listItem("Отчет \u2014 предпросмотр и скачивание отчета в форматах Markdown, CSV, JSON."));
+  const list11 = newBulletList();
+  children.push(listItem("Обзор \u2014 сводные карточки (лучший алгоритм, средняя энтропия, средний лавинный коэффициент) и таблица рейтинга;", { listRef: list11 }));
+  children.push(listItem("Энтропия \u2014 столбчатая диаграмма средней энтропии по алгоритмам и линейный график зависимости энтропии от размера данных;", { listRef: list11 }));
+  children.push(listItem("Лавинный эффект \u2014 столбчатая диаграмма с планками ошибок и референсной линией на уровне 0.5;", { listRef: list11 }));
+  children.push(listItem("Распределение \u2014 визуализация статистических метрик распределения байтов;", { listRef: list11 }));
+  children.push(listItem("Сравнение \u2014 сравнительный анализ алгоритмов по различным метрикам;", { listRef: list11 }));
+  children.push(listItem("Трассировка \u2014 пошаговая визуализация процесса шифрования с отображением данных на каждом этапе;", { listRef: list11 }));
+  children.push(listItem("Отчет \u2014 предпросмотр и скачивание отчета в форматах Markdown, CSV, JSON.", { listRef: list11 }));
 
   // Скриншоты интерфейса
   children.push(screenshotImage("01_main_interface.png", 16));
@@ -1579,13 +1651,12 @@ function generateChapter4() {
     return new TableCell({
       borders,
       width: { size: width, type: WidthType.DXA },
-      shading: { fill: "D9E2F3", type: ShadingType.CLEAR },
       margins: cellMargins,
       children: [new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 0, line: LINE_SPACING },
+        spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
-        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE, bold: true })],
+        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL, bold: true })],
       })],
     });
   }
@@ -1597,9 +1668,9 @@ function generateChapter4() {
       margins: cellMargins,
       children: [new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 0, line: LINE_SPACING },
+        spacing: { after: 0, line: 240 },
         indent: { firstLine: 0 },
-        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE })],
+        children: [new TextRun({ text, font: "Times New Roman", size: FONT_SIZE_SMALL })],
       })],
     });
   }
@@ -1740,6 +1811,7 @@ function generateChapter4() {
     { text: "." },
   ]));
 
+  children.push(LANDSCAPE_START);
   children.push(figureCaption("Результаты теста лавинного эффекта", true));
 
   children.push(new Table({
@@ -1784,6 +1856,7 @@ function generateChapter4() {
       ]}),
     ],
   }));
+  children.push(LANDSCAPE_END);
 
   children.push(normalParagraph("Результаты теста лавинного эффекта демонстрируют чёткое разделение алгоритмов на две группы:"));
 
@@ -1886,6 +1959,7 @@ function generateChapter4() {
 
   children.push(heading3("4.4.3.", "Метрики распределения"));
 
+  children.push(LANDSCAPE_START);
   children.push(figureCaption("Метрики распределения байтов шифртекста", true));
 
   children.push(new Table({
@@ -1923,6 +1997,7 @@ function generateChapter4() {
       ]}),
     ],
   }));
+  children.push(LANDSCAPE_END);
 
   children.push(normalParagraph("Все алгоритмы демонстрируют метрики распределения, близкие к идеальным значениям равномерного распределения U(0, 255): среднее \u2248 127.5, дисперсия \u2248 5461, асимметрия \u2248 0, эксцесс \u2248 \u20131.2. Индекс совпадения IC \u2248 0.0039, что соответствует случайным данным (IC = 1/256 \u2248 0.00390)."));
 
@@ -1931,6 +2006,7 @@ function generateChapter4() {
 
   children.push(normalParagraph("На основе вычисленных частных баллов сформирован итоговый рейтинг алгоритмов по комплексному показателю криптостойкости S_total."));
 
+  children.push(LANDSCAPE_START);
   children.push(figureCaption("Итоговый рейтинг алгоритмов по комплексному показателю S_total", true));
 
   children.push(new Table({
@@ -1966,6 +2042,7 @@ function generateChapter4() {
       ]}),
     ],
   }));
+  children.push(LANDSCAPE_END);
 
   children.push(heading3("4.5.1.", "Анализ результатов"));
 
@@ -2015,31 +2092,33 @@ function generateChapter4() {
 
   children.push(normalParagraph("На основе проведенных экспериментов можно сформулировать следующие рекомендации:"));
 
+  const nlist7 = newNumberedList();
   children.push(listItem([
     { text: "Для обеспечения максимальной криптографической стойкости рекомендуется использовать AES-256 как текущий стандарт" },
     ...ref(27),
     { text: " с наибольшим размером ключа и подтвержденным качеством шифрования." },
-  ], "numbered"));
+  ], { numbered: true, listRef: nlist7 }));
   children.push(listItem([
     { text: "DES" },
     ...ref(28),
     { text: " и 3DES не рекомендуются для новых систем из-за малого размера ключа, несмотря на хорошие статистические показатели шифртекста." },
-  ], "numbered"));
-  children.push(listItem("ГОСТ 28147-89 является приемлемой альтернативой для систем, требующих соответствия российским стандартам.", "numbered"));
-  children.push(listItem("RC4 не рекомендуется к использованию из-за отсутствия диффузии и известных криптографических уязвимостей.", "numbered"));
+  ], { numbered: true, listRef: nlist7 }));
+  children.push(listItem("ГОСТ 28147-89 является приемлемой альтернативой для систем, требующих соответствия российским стандартам.", { numbered: true, listRef: nlist7 }));
+  children.push(listItem("RC4 не рекомендуется к использованию из-за отсутствия диффузии и известных криптографических уязвимостей.", { numbered: true, listRef: nlist7 }));
 
   // 4.6
   children.push(heading2("4.6.", "Демонстрация пошаговой трассировки шифрования"));
 
   children.push(normalParagraph("Платформа CryptoAnalyzer предоставляет функцию пошаговой трассировки, которая визуализирует процесс шифрования на каждом этапе. Трассировка включает семь шагов:"));
 
-  children.push(listItem("Отображение исходных данных: открытый текст, его энтропия и побайтовое распределение.", "numbered"));
-  children.push(listItem("Генерация криптографического ключа заданного размера.", "numbered"));
-  children.push(listItem("Добавление паддинга PKCS7 (для блочных шифров) до размера, кратного блоку.", "numbered"));
-  children.push(listItem("Генерация случайного вектора инициализации IV (для блочных шифров в режиме CBC).", "numbered"));
-  children.push(listItem("Выполнение шифрования с отображением результата, его энтропии и частотного распределения.", "numbered"));
-  children.push(listItem("Формирование итогового шифртекста (IV + зашифрованные данные для блочных шифров).", "numbered"));
-  children.push(listItem("Верификация: дешифрование и проверка совпадения с исходным текстом.", "numbered"));
+  const nlist8 = newNumberedList();
+  children.push(listItem("Отображение исходных данных: открытый текст, его энтропия и побайтовое распределение.", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Генерация криптографического ключа заданного размера.", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Добавление паддинга PKCS7 (для блочных шифров) до размера, кратного блоку.", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Генерация случайного вектора инициализации IV (для блочных шифров в режиме CBC).", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Выполнение шифрования с отображением результата, его энтропии и частотного распределения.", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Формирование итогового шифртекста (IV + зашифрованные данные для блочных шифров).", { numbered: true, listRef: nlist8 }));
+  children.push(listItem("Верификация: дешифрование и проверка совпадения с исходным текстом.", { numbered: true, listRef: nlist8 }));
 
   children.push(normalParagraph("Трассировка наглядно демонстрирует рост энтропии на этапе шифрования: входной текст с энтропией H \u2248 4.0 бит/байт преобразуется в шифртекст с H \u2248 7.9 бит/байт, что подтверждает качественную работу алгоритма."));
 
@@ -2052,18 +2131,19 @@ function generateChapter4() {
 
   children.push(normalParagraph("Платформа CryptoAnalyzer поддерживает автоматическую генерацию исследовательских отчетов в трёх форматах:"));
 
+  const list12 = newBulletList();
   children.push(listItem([
     { text: "Markdown ", bold: true },
     { text: "\u2014 структурированный текстовый отчет с таблицами результатов, включающий сводку энтропийных метрик, результаты лавинного теста, рейтинг алгоритмов и выводы." },
-  ]));
+  ], { listRef: list12 }));
   children.push(listItem([
     { text: "CSV ", bold: true },
     { text: "\u2014 табличный формат для дальнейшего анализа в Excel или R/Python. Содержит все числовые результаты в едином плоском файле." },
-  ]));
+  ], { listRef: list12 }));
   children.push(listItem([
     { text: "JSON ", bold: true },
     { text: "\u2014 машиночитаемый формат для программной обработки. Содержит полную структуру результатов с сохранением вложенности." },
-  ]));
+  ], { listRef: list12 }));
 
   children.push(normalParagraph("Генерация отчета выполняется через интерфейс (вкладка «Отчет») или через API (POST /api/reports/generate). Отчет формируется на основе результатов последнего проведенного эксперимента."));
 
@@ -2234,12 +2314,13 @@ function generateIntroduction() {
     { text: "Задачи исследования:", bold: true },
   ]));
 
-  children.push(listItem("Провести анализ существующих подходов к оценке криптостойкости и обосновать выбор метрик.", "numbered"));
-  children.push(listItem("Систематизировать энтропийные метрики (энтропия Шеннона, KL-дивергенция, условная энтропия, взаимная информация) и статистические тесты для оценки качества шифрования.", "numbered"));
-  children.push(listItem("Разработать комплексную методику оценки криптостойкости с агрегированным показателем.", "numbered"));
-  children.push(listItem("Спроектировать и реализовать веб-платформу CryptoAnalyzer для автоматизации оценки.", "numbered"));
-  children.push(listItem("Провести экспериментальное исследование шести алгоритмов шифрования (AES-256, DES, 3DES, Blowfish, RC4, ГОСТ 28147-89).", "numbered"));
-  children.push(listItem("Сформировать рейтинг алгоритмов по комплексному показателю и разработать рекомендации.", "numbered"));
+  const nlist9 = newNumberedList();
+  children.push(listItem("Провести анализ существующих подходов к оценке криптостойкости и обосновать выбор метрик.", { numbered: true, listRef: nlist9 }));
+  children.push(listItem("Систематизировать энтропийные метрики (энтропия Шеннона, KL-дивергенция, условная энтропия, взаимная информация) и статистические тесты для оценки качества шифрования.", { numbered: true, listRef: nlist9 }));
+  children.push(listItem("Разработать комплексную методику оценки криптостойкости с агрегированным показателем.", { numbered: true, listRef: nlist9 }));
+  children.push(listItem("Спроектировать и реализовать веб-платформу CryptoAnalyzer для автоматизации оценки.", { numbered: true, listRef: nlist9 }));
+  children.push(listItem("Провести экспериментальное исследование шести алгоритмов шифрования (AES-256, DES, 3DES, Blowfish, RC4, ГОСТ 28147-89).", { numbered: true, listRef: nlist9 }));
+  children.push(listItem("Сформировать рейтинг алгоритмов по комплексному показателю и разработать рекомендации.", { numbered: true, listRef: nlist9 }));
 
   children.push(normalParagraph([
     { text: "Методы исследования: ", bold: true },
@@ -2426,6 +2507,8 @@ function generateBibliography() {
 async function main() {
   figureCounter = 0;
   tableCounter = 0;
+  bulletListCounter = 0;
+  numberedListCounter = 0;
 
   const titlePage = generateTitlePage();
   const introduction = generateIntroduction();
@@ -2435,6 +2518,97 @@ async function main() {
   const chapter4 = generateChapter4();
   const conclusion = generateConclusion();
   const bibliography = generateBibliography();
+
+  // Combine all content
+  const allContent = [
+    ...titlePage,
+    new Paragraph({ children: [new PageBreak()] }),
+    new TableOfContents("СОДЕРЖАНИЕ", { hyperlink: true, headingStyleRange: "1-3" }),
+    new Paragraph({ children: [new PageBreak()] }),
+    ...introduction,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...chapter1,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...chapter2,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...chapter3,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...chapter4,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...conclusion,
+    new Paragraph({ children: [new PageBreak()] }),
+    ...bibliography,
+  ];
+
+  // Split content into sections based on landscape markers
+  const defaultHeader = new Header({
+    children: [new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [new TextRun({ children: [PageNumber.CURRENT], font: "Times New Roman", size: FONT_SIZE })],
+    })],
+  });
+
+  const portraitProps = {
+    page: {
+      size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+      margin: { top: MARGIN_TOP, bottom: MARGIN_BOTTOM, left: MARGIN_LEFT, right: MARGIN_RIGHT },
+    },
+  };
+
+  const landscapeProps = {
+    page: {
+      size: { width: PAGE_HEIGHT, height: PAGE_WIDTH, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGIN_RIGHT, bottom: MARGIN_LEFT, left: MARGIN_TOP, right: MARGIN_BOTTOM },
+    },
+  };
+
+  const sections = [];
+  let currentChildren = [];
+  let isLandscape = false;
+
+  for (const item of allContent) {
+    if (isLandscapeMarker(item)) {
+      if (item.__landscapeMarker === "start") {
+        // End current portrait section if it has content
+        if (currentChildren.length > 0) {
+          sections.push({
+            properties: { ...portraitProps, type: sections.length === 0 ? undefined : SectionType.CONTINUOUS },
+            headers: { default: defaultHeader },
+            children: currentChildren,
+          });
+          currentChildren = [];
+        }
+        isLandscape = true;
+      } else if (item.__landscapeMarker === "end") {
+        // End current landscape section
+        if (currentChildren.length > 0) {
+          sections.push({
+            properties: { ...landscapeProps },
+            headers: { default: defaultHeader },
+            children: currentChildren,
+          });
+          currentChildren = [];
+        }
+        isLandscape = false;
+      }
+    } else {
+      currentChildren.push(item);
+    }
+  }
+
+  // Push remaining content
+  if (currentChildren.length > 0) {
+    sections.push({
+      properties: isLandscape ? { ...landscapeProps } : { ...portraitProps },
+      headers: { default: defaultHeader },
+      children: currentChildren,
+    });
+  }
+
+  // If no landscape markers were found (all content in one section), ensure first section has no type
+  if (sections.length > 0 && sections[0].properties.type) {
+    delete sections[0].properties.type;
+  }
 
   const doc = new Document({
     styles: {
@@ -2466,60 +2640,9 @@ async function main() {
       ],
     },
     numbering: {
-      config: [
-        {
-          reference: "bulletList",
-          levels: [{
-            level: 0, format: LevelFormat.BULLET, text: "\u2013", alignment: AlignmentType.LEFT,
-            style: { paragraph: { indent: { left: 1080, hanging: 360 } } },
-          }],
-        },
-        {
-          reference: "numberedList",
-          levels: [{
-            level: 0, format: LevelFormat.DECIMAL, text: "%1)", alignment: AlignmentType.LEFT,
-            style: { paragraph: { indent: { left: 1080, hanging: 360 } } },
-          }],
-        },
-      ],
+      config: generateNumberingConfigs(),
     },
-    sections: [
-      {
-        properties: {
-          page: {
-            size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
-            margin: { top: MARGIN_TOP, bottom: MARGIN_BOTTOM, left: MARGIN_LEFT, right: MARGIN_RIGHT },
-          },
-        },
-        headers: {
-          default: new Header({
-            children: [new Paragraph({
-              alignment: AlignmentType.CENTER,
-              children: [new TextRun({ children: [PageNumber.CURRENT], font: "Times New Roman", size: FONT_SIZE })],
-            })],
-          }),
-        },
-        children: [
-          ...titlePage,
-          new Paragraph({ children: [new PageBreak()] }),
-          new TableOfContents("СОДЕРЖАНИЕ", { hyperlink: true, headingStyleRange: "1-3" }),
-          new Paragraph({ children: [new PageBreak()] }),
-          ...introduction,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...chapter1,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...chapter2,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...chapter3,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...chapter4,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...conclusion,
-          new Paragraph({ children: [new PageBreak()] }),
-          ...bibliography,
-        ],
-      },
-    ],
+    sections: sections,
   });
 
   const buffer = await Packer.toBuffer(doc);
