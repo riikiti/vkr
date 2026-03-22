@@ -2673,8 +2673,24 @@ async function main() {
   });
 
   const buffer = await Packer.toBuffer(doc);
-  fs.writeFileSync("Диссертация.docx", buffer);
-  console.log("Document generated: Диссертация.docx");
+
+  // --- Версионность: сохранить предыдущую версию ---
+  const outputFile = path.join(__dirname, "Диссертация.docx");
+  if (fs.existsSync(outputFile)) {
+    const versionsDir = path.join(__dirname, "versions");
+    if (!fs.existsSync(versionsDir)) {
+      fs.mkdirSync(versionsDir, { recursive: true });
+    }
+    const stat = fs.statSync(outputFile);
+    const d = stat.mtime;
+    const timestamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}_${String(d.getHours()).padStart(2, "0")}-${String(d.getMinutes()).padStart(2, "0")}-${String(d.getSeconds()).padStart(2, "0")}`;
+    const versionFile = path.join(versionsDir, `Диссертация_${timestamp}.docx`);
+    fs.copyFileSync(outputFile, versionFile);
+    console.log("Previous version saved:", versionFile);
+  }
+
+  fs.writeFileSync(outputFile, buffer);
+  console.log("Document generated:", outputFile);
 }
 
 main().catch(console.error);
