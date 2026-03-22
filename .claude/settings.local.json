@@ -138,7 +138,10 @@
       "Bash(RCLONE=\"/c/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 1 — Энтропийный анализ — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1)",
       "Bash(RCLONE=\"/c/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" purge \"gdrive:ВКР\" --drive-use-trash=false -v 2>&1)",
       "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/docs/vkr\" && node upload_to_drive.js article1 article2)",
-      "Bash(RCLONE=\"/c/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" deletefile \"gdrive:ВКР/Диссертация — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1 && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 1 — Энтропийный анализ — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1 && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 2 — Криптостойкость шифров — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1)"
+      "Bash(RCLONE=\"/c/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" deletefile \"gdrive:ВКР/Диссертация — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1 && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 1 — Энтропийный анализ — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1 && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 2 — Криптостойкость шифров — Курский Р.С.docx\" --drive-use-trash=false -v 2>&1)",
+      "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/docs/vkr\" && node _renumber_refs2.js)",
+      "Bash(rm \"/c/Users/Ruslan/Проекты/вкр/docs/vkr/_renumber_refs2.js\" && cd \"/c/Users/Ruslan/Проекты/вкр/docs/vkr\" && node generate_dissertation.js)",
+      "Bash(cd \"/c/Users/Ruslan/Проекты/вкр/docs/vkr\" && node upload_to_drive.js dissertation)"
     ]
   }
 }

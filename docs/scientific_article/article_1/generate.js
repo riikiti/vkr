@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { execSync } = require("child_process");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   AlignmentType, ImageRun, BorderStyle, WidthType, ShadingType
@@ -361,6 +362,17 @@ function generate() {
 
     fs.writeFileSync(outPath, buffer);
     console.log("Article 1 generated:", outPath);
+
+    // --- Автозагрузка на Google Drive ---
+    const RCLONE = "C:/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe";
+    const remotePath = "gdrive:ВКР/Статья 1 — Энтропийный анализ — Курский Р.И.docx";
+    try {
+      try { execSync(`"${RCLONE}" deletefile "${remotePath}" --drive-use-trash=false`, { stdio: "pipe" }); } catch {}
+      execSync(`"${RCLONE}" copyto "${outPath}" "${remotePath}"`, { stdio: "inherit" });
+      console.log("Uploaded to Google Drive:", remotePath);
+    } catch (err) {
+      console.error("Google Drive upload failed:", err.message);
+    }
   });
 }
 
