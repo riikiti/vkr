@@ -169,7 +169,29 @@
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 03_Kullback_Leibler_1951_Information_Sufficiency.pdf && curl -L -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" -o \"03_Kullback_Leibler_1951_Information_Sufficiency.pdf\" \"https://www.jstor.org/stable/2236703\" 2>&1 | tail -3)",
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 03_Kullback_Leibler_1951_Information_Sufficiency.pdf && curl -L -A \"Mozilla/5.0\" -o \"03_Kullback_Leibler_1951_Information_Sufficiency.pdf\" \"https://ecm-journal.ru/files/2723827.pdf\" 2>&1 | tail -3)",
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && mv 03_Kullback_Leibler_1951_Information_Sufficiency.pdf 11b_GOST_28147-89_article.pdf)",
-      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && ls -lhS *.pdf | head -30)"
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && ls -lhS *.pdf | head -30)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr\" && node generate_dissertation.js 2>&1 | tail -20)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr\" && npm install 2>&1 | tail -5)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr\" && node generate_dissertation.js 2>&1 | tail -10)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"31_Shannon_1949_Communication_Theory_Secrecy.pdf\" \"https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"34_NIST_FIPS197_AES.pdf\" \"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197-upd1.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"35_NIST_SP800-22_Statistical_Tests.pdf\" \"https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-22r1a.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"20_GOST_28147-89.pdf\" \"https://meganorm.ru/Data2/1/4294826/4294826631.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"21_GOST_34.12-2018.pdf\" \"https://meganorm.ru/Data2/1/4293732/4293732907.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"26_Bernstein_2008_ChaCha.pdf\" \"https://cr.yp.to/chacha/chacha-20080128.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"27_Biham_Shamir_1991_Differential_Cryptanalysis.pdf\" \"https://www.ioactive.com/wp-content/uploads/2015/07/biham91differential.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"28_Hurley-Smith_2022_SP800-22_Obsolete.pdf\" \"https://eprint.iacr.org/2022/169.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"29_Marton_2022_Odyssey_Entropy_Cryptography.pdf\" \"https://www.mdpi.com/1099-4300/24/2/266/pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"30_Matsui_1993_Linear_Cryptanalysis_DES.pdf\" \"http://www.cs.bilkent.edu.tr/~selcuk/teaching/cs519/Matsui-LC.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"33_Webster_Tavares_1986_Design_S-Boxes.pdf\" \"https://link.springer.com/content/pdf/10.1007/3-540-39799-X_41.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"09_Schneier_1993_Blowfish.pdf\" \"https://link.springer.com/content/pdf/10.1007/3-540-58108-1_24.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -o \"22_GOST_34.13-2015.pdf\" \"https://meganorm.ru/Data2/1/4293762/4293762704.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -A \"Mozilla/5.0\" -o \"11_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 29_Marton_2022_Odyssey_Entropy_Cryptography.pdf && curl -L -A \"Mozilla/5.0\" -o \"29_Marton_2022_Odyssey_Entropy_Cryptography.pdf\" \"https://mdpi-res.com/d_attachment/entropy/entropy-24-00266/article_deploy/entropy-24-00266.pdf\" 2>&1 | tail -2)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1 | tail -3)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -v -L -A \"Mozilla/5.0\" -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1 | tail -10)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl --connect-timeout 10 --max-time 20 -L -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1)",
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 19_Baumansky_2022_GOST_vs_AES.pdf 2>/dev/null; ls -lhS *.pdf)"
     ]
   }
 }
