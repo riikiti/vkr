@@ -2,3 +2,6 @@ node_modules/
 __pycache__/
 .env
 *.env.local
+
+# Литература (PDF слишком большие для репозитория)
+docs/vkr/literature/*.pdf
