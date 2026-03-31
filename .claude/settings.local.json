@@ -194,7 +194,16 @@
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 19_Baumansky_2022_GOST_vs_AES.pdf 2>/dev/null; ls -lhS *.pdf)",
       "Bash(where soffice:*)",
       "Read(//c/Program Files/LibreOffice/program/**)",
-      "Read(//c/Program Files \\(x86\\)/LibreOffice/program/**)"
+      "Read(//c/Program Files \\(x86\\)/LibreOffice/program/**)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/docs/scientific_article/article_1\" && node generate_itdays.js 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/docs/scientific_article/article_1\" && node generate_izhgtu.js 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/docs/scientific_article/article_2\" && node generate_itdays.js 2>&1)",
+      "Bash(cd \"C:/Users/Ruslan/Проекты/вкр/docs/scientific_article/article_2\" && node generate_izhgtu.js 2>&1)",
+      "Bash(ls -la \"C:/Users/Ruslan/Проекты/вкр/docs/vkr/\"*.docx 2>&1)",
+      "Bash(RCLONE=\"C:/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && DOCX=\"C:/Users/Ruslan/Проекты/вкр/docs/vkr/Диссертация.docx\" && REMOTE=\"gdrive:ВКР/Диссертация — Курский Р.И.docx\" && \"$RCLONE\" deletefile \"$REMOTE\" --drive-use-trash=false 2>/dev/null; \"$RCLONE\" copyto \"$DOCX\" \"$REMOTE\" 2>&1)",
+      "Bash(RCLONE=\"C:/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" ls \"gdrive:ВКР/\" 2>&1 | grep -i \"татья\\\\|article\")",
+      "Bash(RCLONE=\"C:/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" ls \"gdrive:ВКР/\" 2>&1)",
+      "Bash(RCLONE=\"C:/Users/Ruslan/AppData/Local/Microsoft/WinGet/Packages/Rclone.Rclone_Microsoft.Winget.Source_8wekyb3d8bbwe/rclone-v1.73.2-windows-amd64/rclone.exe\" && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 1 — Энтропийный анализ — Курский Р.И.docx\" --drive-use-trash=false 2>&1 && echo \"Deleted article 1 old\" && \"$RCLONE\" deletefile \"gdrive:ВКР/Статья 2 — Криптостойкость шифров — Курский Р.И.docx\" --drive-use-trash=false 2>&1 && echo \"Deleted article 2 old\")"
     ]
   }
 }
