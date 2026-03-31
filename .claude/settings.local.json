@@ -191,7 +191,10 @@
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -L -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1 | tail -3)",
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl -v -L -A \"Mozilla/5.0\" -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1 | tail -10)",
       "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && curl --connect-timeout 10 --max-time 20 -L -o \"19_Baumansky_2022_GOST_vs_AES.pdf\" \"https://ptsj.bmstu.ru/articles/785/785.pdf\" 2>&1)",
-      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 19_Baumansky_2022_GOST_vs_AES.pdf 2>/dev/null; ls -lhS *.pdf)"
+      "Bash(cd \"C:/Users/ivanh/PycharmProjects/vkr/docs/vkr/literature\" && rm -f 19_Baumansky_2022_GOST_vs_AES.pdf 2>/dev/null; ls -lhS *.pdf)",
+      "Bash(where soffice:*)",
+      "Read(//c/Program Files/LibreOffice/program/**)",
+      "Read(//c/Program Files \\(x86\\)/LibreOffice/program/**)"
     ]
   }
 }
