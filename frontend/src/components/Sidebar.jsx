@@ -82,6 +82,40 @@ const TEST_CASES = [
     },
   },
   {
+    id: 'rc4_vs_rc6',
+    label: 'RC4 vs RC6',
+    description: 'Потоковый RC4 vs Блочный RC6 (Ривест)',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+      </svg>
+    ),
+    color: '#fb923c',
+    params: {
+      algorithms: ['RC4', 'RC6'],
+      data_types: ['text', 'binary', 'random', 'zeros', 'structured'],
+      data_sizes: [1024, 10240, 102400],
+      avalanche_iterations: 100,
+    },
+  },
+  {
+    id: 'blowfish_vs_twofish',
+    label: 'Blowfish vs Twofish',
+    description: 'Blowfish (1993) vs Twofish (1998, Шнайер)',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    ),
+    color: '#22d3ee',
+    params: {
+      algorithms: ['BLOWFISH', 'TWOFISH'],
+      data_types: ['text', 'binary', 'random', 'zeros', 'structured'],
+      data_sizes: [1024, 10240, 102400],
+      avalanche_iterations: 100,
+    },
+  },
+  {
     id: 'quick',
     label: 'Быстрый тест',
     description: 'AES + DES, текст + случайные, 1KB',
