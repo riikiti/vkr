@@ -116,6 +116,40 @@ const TEST_CASES = [
     },
   },
   {
+    id: 'des_vs_3des',
+    label: 'DES vs 3DES',
+    description: 'DES (1977) vs Triple DES (усиленный)',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/>
+      </svg>
+    ),
+    color: '#a78bfa',
+    params: {
+      algorithms: ['DES', '3DES'],
+      data_types: ['text', 'binary', 'random', 'zeros', 'structured'],
+      data_sizes: [1024, 10240, 102400],
+      avalanche_iterations: 100,
+    },
+  },
+  {
+    id: 'des_vs_aes',
+    label: 'DES vs AES',
+    description: 'Старый стандарт (DES) vs Новый (AES-256)',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v20"/><path d="M2 12h20"/>
+      </svg>
+    ),
+    color: '#4f8ffc',
+    params: {
+      algorithms: ['DES', 'AES'],
+      data_types: ['text', 'binary', 'random', 'zeros', 'structured'],
+      data_sizes: [1024, 10240, 102400],
+      avalanche_iterations: 100,
+    },
+  },
+  {
     id: 'quick',
     label: 'Быстрый тест',
     description: 'AES + DES, текст + случайные, 1KB',
