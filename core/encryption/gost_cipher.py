@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 from .base_cipher import BaseCipher
 
 
-# S-блоки ГОСТ 28147-89 (id-GostR3411-94-CryptoProParamSet)
+# S-блоки ГОСТ Р 34.12-2015 «Магма» (id-GostR3411-94-CryptoProParamSet)
 _SBOX = [
     [10, 4, 5, 6, 8, 1, 3, 7, 13, 12, 14, 0, 9, 2, 11, 15],
     [5, 15, 4, 0, 2, 13, 11, 9, 1, 7, 6, 3, 12, 14, 10, 8],
@@ -18,7 +18,7 @@ _SBOX = [
 
 
 def _gost_round(block_l, block_r, key_part):
-    """Один раунд сети Фейстеля ГОСТ 28147-89."""
+    """Один раунд сети Фейстеля ГОСТ Р 34.12-2015 (Магма)."""
     # Сложение с ключом по модулю 2^32
     temp = (block_r + key_part) & 0xFFFFFFFF
 
@@ -78,7 +78,7 @@ def _xor_bytes(a, b):
 
 
 class GostCipher(BaseCipher):
-    """ГОСТ 28147-89 (Магма) в режиме CBC с PKCS7-паддингом."""
+    """ГОСТ Р 34.12-2015 (Магма) в режиме CBC с PKCS7-паддингом."""
 
     KEY_SIZE = 32   # 256 бит
     BLOCK_SIZE = 8  # 64 бита

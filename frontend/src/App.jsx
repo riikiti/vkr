@@ -66,7 +66,7 @@ function App() {
       .then((res) => setConfig(res.data))
       .catch(() => {
         setConfig({
-          algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', '3DES', 'GOST'],
+          algorithms: ['AES', 'DES', 'BLOWFISH', 'TWOFISH', 'RC4', 'RC6', '3DES', 'GOST'],
           data_types: ['text', 'binary', 'random', 'image'],
           data_sizes: [1024, 10240, 102400, 1048576],
         });

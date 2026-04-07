@@ -120,7 +120,7 @@ function generate() {
   const children = [];
 
   // --- УДК ---
-  children.push(p("УДК 003.26; 519.72", { size: SMALL_SIZE, noIndent: true, align: AlignmentType.LEFT }));
+  children.push(p("УДК 004.056.55", { size: SMALL_SIZE, noIndent: true, align: AlignmentType.LEFT }));
   children.push(emptyLine());
 
   // --- Название RU (UPPERCASE) ---

@@ -22,7 +22,9 @@ const ALG_ICONS = {
   AES: { color: '#4f8ffc', type: 'block' },
   DES: { color: '#f87171', type: 'block' },
   BLOWFISH: { color: '#34d399', type: 'block' },
+  TWOFISH: { color: '#22d3ee', type: 'block' },
   RC4: { color: '#fbbf24', type: 'stream' },
+  RC6: { color: '#fb923c', type: 'block' },
   '3DES': { color: '#a78bfa', type: 'block' },
   GOST: { color: '#f472b6', type: 'block' },
 };
@@ -39,7 +41,7 @@ const TEST_CASES = [
     ),
     color: '#fbbf24',
     params: {
-      algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', '3DES', 'GOST'],
+      algorithms: ['AES', 'DES', 'BLOWFISH', 'TWOFISH', 'RC4', 'RC6', '3DES', 'GOST'],
       data_types: ['text', 'binary', 'random', 'image', 'zeros', 'structured', 'incremental'],
       data_sizes: [1024, 102400],
       avalanche_iterations: 100,
@@ -48,7 +50,7 @@ const TEST_CASES = [
   {
     id: 'block_vs_stream',
     label: 'Блочные vs Потоковые',
-    description: 'AES и RC4, все типы данных',
+    description: 'Блочные (AES, Twofish, RC6) vs Потоковый (RC4)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
@@ -56,7 +58,7 @@ const TEST_CASES = [
     ),
     color: '#a78bfa',
     params: {
-      algorithms: ['AES', 'RC4'],
+      algorithms: ['AES', 'TWOFISH', 'RC6', 'RC4'],
       data_types: ['text', 'binary', 'random', 'zeros', 'structured'],
       data_sizes: [1024, 10240, 102400],
       avalanche_iterations: 100,
@@ -73,7 +75,7 @@ const TEST_CASES = [
     ),
     color: '#22d3ee',
     params: {
-      algorithms: ['AES', 'DES', 'BLOWFISH', 'RC4', '3DES', 'GOST'],
+      algorithms: ['AES', 'DES', 'BLOWFISH', 'TWOFISH', 'RC4', 'RC6', '3DES', 'GOST'],
       data_types: ['zeros', 'binary', 'random'],
       data_sizes: [1024, 10240],
       avalanche_iterations: 100,
@@ -164,7 +166,7 @@ function Sidebar({ config, onRun, loading, isOpen, onClose }) {
   const [customFileBytes, setCustomFileBytes] = useState(null);
   const [customError, setCustomError] = useState(null);
 
-  const availableAlgorithms = config?.algorithms || ['AES', 'DES', 'BLOWFISH', 'RC4', 'CHACHA20'];
+  const availableAlgorithms = config?.algorithms || ['AES', 'DES', 'BLOWFISH', 'TWOFISH', 'RC4', 'RC6', '3DES', 'GOST'];
   const availableDataTypes = config?.data_types || ['text', 'binary', 'random', 'image'];
   const availableDataSizes = config?.data_sizes || [1024, 10240, 102400, 1048576];
 

@@ -13,7 +13,9 @@ ALGORITHMS = [
     "AES",
     "DES",
     "BLOWFISH",
+    "TWOFISH",
     "RC4",
+    "RC6",
     "3DES",
     "GOST",
 ]

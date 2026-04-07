@@ -291,7 +291,7 @@ def run_trace(request: TraceRequest):
             cipher = get_cipher(algo_upper)
             key = cipher.generate_key()
 
-            is_stream = algo_upper == "RC4"
+            is_stream = algo_upper in ("RC4", "CHACHA20")
             block_size = getattr(cipher, "BLOCK_SIZE", None)
             key_size = getattr(cipher, "KEY_SIZE", 16)
 
@@ -343,7 +343,7 @@ def run_trace(request: TraceRequest):
                     steps.append({
                         "step": 3,
                         "title": "Дополнение не требуется",
-                        "description": "RC4 — потоковый шифр, не требует выравнивания по блокам",
+                        "description": "Потоковый шифр, не требует выравнивания по блокам",
                         "data_hex": _bytes_to_hex_preview(plaintext, 128),
                         "data_size": len(plaintext),
                     })
@@ -380,7 +380,7 @@ def run_trace(request: TraceRequest):
                     steps.append({
                         "step": 5,
                         "title": "Шифрование (результат)",
-                        "description": f"Потоковый шифр RC4. Время: {enc_time*1000:.2f} мс",
+                        "description": f"Потоковый шифр. Время: {enc_time*1000:.2f} мс",
                         "data_hex": _bytes_to_hex_preview(ciphertext, 128),
                         "data_size": len(ciphertext),
                         "entropy": round(calculate_shannon_entropy(ciphertext), 4),

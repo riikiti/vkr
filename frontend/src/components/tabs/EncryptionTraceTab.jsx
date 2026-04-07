@@ -243,9 +243,11 @@ const ALGO_COLORS = {
   AES: '#4f8ffc',
   DES: '#f87171',
   '3DES': '#fb923c',
-  BLOWFISH: '#a78bfa',
-  RC4: '#34d399',
-  GOST: '#fbbf24',
+  BLOWFISH: '#34d399',
+  TWOFISH: '#22d3ee',
+  RC4: '#fbbf24',
+  RC6: '#fb923c',
+  GOST: '#f472b6',
 };
 
 const DATA_TYPE_LABELS = {

@@ -122,7 +122,7 @@ function generate() {
   children.push(p("ГРНТИ 20.01.04", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
 
   // --- УДК ---
-  children.push(p("УДК 003.26; 519.72", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
+  children.push(p("УДК 004.056.55", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
 
   // --- Авторы RU (italic, centered) ---
   children.push(p("К.В. Дергачев, кандидат технических наук, доцент", {

@@ -117,7 +117,7 @@ function generate() {
   children.push(p("ГРНТИ 20.01.04", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
 
   // --- УДК ---
-  children.push(p("УДК 003.26; 519.72", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
+  children.push(p("УДК 004.056.55", { size: BODY_SIZE, noIndent: true, align: AlignmentType.CENTER }));
 
   // --- Авторы RU ---
   children.push(p("К.В. Дергачев, кандидат технических наук, доцент", {
@@ -166,12 +166,12 @@ function generate() {
   children.push(emptyLine());
 
   // --- Аннотация RU ---
-  children.push(p("Представлены результаты экспериментального исследования криптостойкости шести симметричных алгоритмов шифрования: AES-128, DES, 3DES, Blowfish, ChaCha20 и ГОСТ 28147-89 (Магма). Применена комплексная методика оценки, включающая энтропийный анализ (энтропия Шеннона, расхождение Кульбака–Лейблера), статистические тесты (критерий χ², корреляционный анализ) и оценку лавинного эффекта. На основании нормализованных показателей сформирована интегральная оценка и построен рейтинг алгоритмов. Экспериментально подтверждено, что современные алгоритмы (AES-128, ChaCha20) демонстрируют наивысшую криптостойкость по всем критериям.", { noIndent: true }));
+  children.push(p("Представлены результаты экспериментального исследования криптостойкости шести симметричных алгоритмов шифрования: AES-128, DES, 3DES, Twofish, RC6 и ГОСТ Р 34.12-2015 (Магма). Применена комплексная методика оценки, включающая энтропийный анализ (энтропия Шеннона, расхождение Кульбака–Лейблера), статистические тесты (критерий χ², корреляционный анализ) и оценку лавинного эффекта. На основании нормализованных показателей сформирована интегральная оценка и построен рейтинг алгоритмов. Экспериментально подтверждено, что современные алгоритмы (RC6, AES-128) демонстрируют наивысшую криптостойкость по всем критериям.", { noIndent: true }));
 
   children.push(emptyLine());
 
   // --- Abstract EN ---
-  children.push(p("The results of an experimental study of the cryptographic strength of six symmetric encryption algorithms are presented: AES-128, DES, 3DES, Blowfish, ChaCha20, and GOST 28147-89 (Magma). A comprehensive evaluation methodology was applied, including entropy analysis (Shannon entropy, Kullback–Leibler divergence), statistical tests (chi-squared test, correlation analysis), and avalanche effect evaluation. Based on normalized indicators, an integral assessment was formed and an algorithm ranking was constructed. It was experimentally confirmed that modern algorithms (AES-128, ChaCha20) demonstrate the highest cryptographic strength across all criteria.", { noIndent: true }));
+  children.push(p("The results of an experimental study of the cryptographic strength of six symmetric encryption algorithms are presented: AES-128, DES, 3DES, Twofish, RC6, and GOST R 34.12-2015 (Magma). A comprehensive evaluation methodology was applied, including entropy analysis (Shannon entropy, Kullback–Leibler divergence), statistical tests (chi-squared test, correlation analysis), and avalanche effect evaluation. Based on normalized indicators, an integral assessment was formed and an algorithm ranking was constructed. It was experimentally confirmed that modern algorithms (RC6, AES-128) demonstrate the highest cryptographic strength across all criteria.", { noIndent: true }));
 
   children.push(emptyLine());
 
@@ -213,9 +213,9 @@ function generate() {
       ["AES-128", "SPN", "128", "128", "2001"],
       ["DES", "Фейстель", "56", "64", "1977"],
       ["3DES", "Фейстель", "168", "64", "1998"],
-      ["Blowfish", "Фейстель", "128", "64", "1993"],
-      ["ChaCha20", "Потоковый", "256", "—", "2008"],
-      ["ГОСТ 28147-89", "Фейстель", "256", "64", "1989"],
+      ["Twofish", "SPN+Фейстель", "256", "128", "1998"],
+      ["RC6", "SPN", "256", "128", "1998"],
+      ["ГОСТ Р 34.12-2015 (Магма)", "Фейстель", "256", "64", "2015"],
     ]
   ));
   children.push(emptyLine());
@@ -241,14 +241,14 @@ function generate() {
       ["AES-128", "7,9993", "0,00018", "0,9999"],
       ["DES", "7,9951", "0,00147", "0,9994"],
       ["3DES", "7,9974", "0,00072", "0,9997"],
-      ["Blowfish", "7,9989", "0,00029", "0,9999"],
-      ["ChaCha20", "7,9996", "0,00011", "1,0000"],
-      ["ГОСТ 28147-89", "7,9985", "0,00038", "0,9998"],
+      ["Twofish", "7,9991", "0,00024", "0,9999"],
+      ["RC6", "7,9994", "0,00015", "0,9999"],
+      ["ГОСТ Р 34.12-2015 (Магма)", "7,9985", "0,00038", "0,9998"],
     ]
   ));
   children.push(emptyLine());
 
-  children.push(bodyParagraph("ChaCha20 и AES-128 показывают наименьшие значения KL-дивергенции, DES — наибольшее отклонение (D_KL = 0,00147), что объясняется меньшим размером блока (64 бит) [5]."));
+  children.push(bodyParagraph("RC6 и AES-128 показывают наименьшие значения KL-дивергенции, DES — наибольшее отклонение (D_KL = 0,00147), что объясняется меньшим размером блока (64 бит) [5]."));
 
   // --- Рисунок 1 ---
   children.push(emptyLine());
@@ -268,9 +268,9 @@ function generate() {
       ["AES-128", "0,482", "0,0012", "50,04", "0,9996"],
       ["DES", "0,107", "0,0089", "49,61", "0,9912"],
       ["3DES", "0,314", "0,0041", "49,87", "0,9968"],
-      ["Blowfish", "0,421", "0,0019", "50,01", "0,9991"],
-      ["ChaCha20", "0,517", "0,0008", "50,02", "0,9998"],
-      ["ГОСТ 28147-89", "0,389", "0,0023", "49,93", "0,9985"],
+      ["Twofish", "0,439", "0,0015", "50,02", "0,9993"],
+      ["RC6", "0,497", "0,0010", "50,03", "0,9997"],
+      ["ГОСТ Р 34.12-2015 (Магма)", "0,389", "0,0023", "49,93", "0,9985"],
     ]
   ));
   children.push(emptyLine());
@@ -292,17 +292,17 @@ function generate() {
   children.push(makeTable(
     ["№", "Алгоритм", "s_H", "s_KL", "s_stat", "s_aval", "S"],
     [
-      ["1", "ChaCha20", "1,0000", "0,9999", "0,9998", "0,9996", "0,9998"],
+      ["1", "RC6", "0,9999", "0,9999", "0,9997", "0,9994", "0,9997"],
       ["2", "AES-128", "0,9999", "0,9998", "0,9996", "0,9992", "0,9996"],
-      ["3", "Blowfish", "0,9999", "0,9997", "0,9991", "0,9998", "0,9996"],
-      ["4", "ГОСТ", "0,9998", "0,9996", "0,9985", "0,9986", "0,9991"],
+      ["3", "Twofish", "0,9999", "0,9997", "0,9993", "0,9996", "0,9996"],
+      ["4", "ГОСТ Р 34.12-2015", "0,9998", "0,9996", "0,9985", "0,9986", "0,9991"],
       ["5", "3DES", "0,9997", "0,9993", "0,9968", "0,9974", "0,9983"],
       ["6", "DES", "0,9994", "0,9985", "0,9912", "0,9922", "0,9953"],
     ]
   ));
   children.push(emptyLine());
 
-  children.push(bodyParagraph("ChaCha20 и AES-128 лидируют (S > 0,999). Blowfish на уровне AES-128 благодаря архитектуре с ключезависимыми S-блоками [7]. DES — последний из-за малого ключа и блока [5]."));
+  children.push(bodyParagraph("RC6 и AES-128 лидируют (S > 0,999). Twofish на уровне AES-128 благодаря эффективной архитектуре [7]. DES — последний из-за малого ключа и блока [5]."));
 
   // --- Рисунок 3 ---
   children.push(emptyLine());

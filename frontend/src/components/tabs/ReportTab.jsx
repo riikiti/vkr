@@ -56,7 +56,7 @@ function ReportTab({ results }) {
     md += `| Ранг | Алгоритм | Тип | Оценка | Энтропия | KL-диверг. | Лавинный | Корреляция |\n`;
     md += `| ---- | -------- | --- | ------ | -------- | ---------- | -------- | ---------- |\n`;
     ranking.forEach((r) => {
-      const type = ['AES', 'DES', 'BLOWFISH'].includes(r.algorithm) ? 'Блочный' : 'Потоковый';
+      const type = ['RC4'].includes(r.algorithm) ? 'Потоковый' : 'Блочный';
       md += `| ${r.rank} | ${r.algorithm} | ${type} | ${r.total_score?.toFixed(4) ?? 'N/A'} | ${r.score_entropy?.toFixed(4) ?? '-'} | ${r.score_kl?.toFixed(4) ?? '-'} | ${r.score_avalanche?.toFixed(4) ?? '-'} | ${r.score_corr?.toFixed(4) ?? '-'} |\n`;
     });
 
@@ -127,7 +127,7 @@ function ReportTab({ results }) {
     });
 
     const streamAlgs = algorithms.filter(a => ['RC4'].includes(a));
-    const blockAlgs = algorithms.filter(a => ['AES', 'DES', 'BLOWFISH', '3DES', 'GOST'].includes(a));
+    const blockAlgs = algorithms.filter(a => !['RC4'].includes(a));
     if (streamAlgs.length > 0 && blockAlgs.length > 0) {
       const blockAvg = avg(blockAlgs.map(a => avalByAlg[a] ? avg(avalByAlg[a].means) : 0));
       const streamAvg = avg(streamAlgs.map(a => avalByAlg[a] ? avg(avalByAlg[a].means) : 0));
@@ -301,7 +301,7 @@ function ReportTab({ results }) {
 
     md += `3. **Влияние типа данных:** все исследованные алгоритмы показали способность приводить энтропию шифротекста к значениям, близким к теоретическому максимуму (8.0 бит/байт), независимо от энтропии входных данных — от нулевых данных (0 бит) до случайных (8 бит).\n\n`;
     md += `4. **Блочные vs потоковые:** блочные шифры (AES, DES, 3DES, ГОСТ 28147-89, Blowfish) обеспечивают лучший лавинный эффект благодаря многораундовым подстановкам и перестановкам. Потоковый шифр RC4 выполняет XOR с ключевым потоком, что обеспечивает высокую энтропию, но не создаёт лавинного эффекта при изменении открытого текста.\n\n`;
-    md += `5. **Практическая рекомендация:** для задач, требующих высокой криптостойкости, рекомендуется использовать AES-256, ГОСТ 28147-89 или 3DES. DES и RC4 не следует применять в новых системах.\n`;
+    md += `5. **Практическая рекомендация:** для задач, требующих высокой криптостойкости, рекомендуется использовать AES-256, Twofish, RC6 или ГОСТ Р 34.12-2015. DES и RC4 не следует применять в новых системах.\n`;
 
     // === 10. PERSPECTIVES ===
     sectionNum++;
