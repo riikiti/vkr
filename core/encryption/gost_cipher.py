@@ -83,6 +83,16 @@ class GostCipher(BaseCipher):
     KEY_SIZE = 32   # 256 бит
     BLOCK_SIZE = 8  # 64 бита
 
+    def __init__(self):
+        self._cached_key_bytes = None
+        self._cached_key_parts = None
+
+    def _get_key_parts(self, key: bytes):
+        if self._cached_key_bytes != key:
+            self._cached_key_bytes = key
+            self._cached_key_parts = _parse_key(key)
+        return self._cached_key_parts
+
     @property
     def name(self) -> str:
         return "GOST"
@@ -93,7 +103,7 @@ class GostCipher(BaseCipher):
     def encrypt(self, data: bytes, key: bytes) -> bytes:
         iv = get_random_bytes(self.BLOCK_SIZE)
         padded = pad(data, self.BLOCK_SIZE)
-        key_parts = _parse_key(key)
+        key_parts = self._get_key_parts(key)
 
         ct = bytearray()
         prev = iv
@@ -112,7 +122,7 @@ class GostCipher(BaseCipher):
         else:
             iv = iv[:self.BLOCK_SIZE].ljust(self.BLOCK_SIZE, b'\x00')
         padded = pad(data, self.BLOCK_SIZE)
-        key_parts = _parse_key(key)
+        key_parts = self._get_key_parts(key)
 
         ct = bytearray()
         prev = iv
@@ -128,7 +138,7 @@ class GostCipher(BaseCipher):
     def decrypt(self, data: bytes, key: bytes) -> bytes:
         iv = data[:self.BLOCK_SIZE]
         ct = data[self.BLOCK_SIZE:]
-        key_parts = _parse_key(key)
+        key_parts = self._get_key_parts(key)
 
         pt = bytearray()
         prev = iv

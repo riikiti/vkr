@@ -260,6 +260,17 @@ class TwofishCipher(BaseCipher):
     KEY_SIZE = 32    # 256 бит
     BLOCK_SIZE = 16  # 128 бит
 
+    def __init__(self):
+        self._cached_key_bytes = None
+        self._cached_tf_key = None
+
+    def _get_tf_key(self, key: bytes) -> '_TwofishKey':
+        """Кеширование расписания ключа для повторных вызовов с тем же ключом."""
+        if self._cached_key_bytes != key:
+            self._cached_key_bytes = key
+            self._cached_tf_key = _TwofishKey(key)
+        return self._cached_tf_key
+
     @property
     def name(self) -> str:
         return "TWOFISH"
@@ -267,11 +278,7 @@ class TwofishCipher(BaseCipher):
     def generate_key(self) -> bytes:
         return get_random_bytes(self.KEY_SIZE)
 
-    def encrypt(self, data: bytes, key: bytes) -> bytes:
-        iv = get_random_bytes(self.BLOCK_SIZE)
-        padded = pad(data, self.BLOCK_SIZE)
-        tf_key = _TwofishKey(key)
-
+    def _cbc_encrypt(self, padded: bytes, tf_key: '_TwofishKey', iv: bytes) -> bytes:
         ct = bytearray()
         prev = iv
         for i in range(0, len(padded), self.BLOCK_SIZE):
@@ -280,8 +287,13 @@ class TwofishCipher(BaseCipher):
             encrypted = _twofish_encrypt_block(xored, tf_key)
             ct.extend(encrypted)
             prev = encrypted
+        return bytes(ct)
 
-        return iv + bytes(ct)
+    def encrypt(self, data: bytes, key: bytes) -> bytes:
+        iv = get_random_bytes(self.BLOCK_SIZE)
+        padded = pad(data, self.BLOCK_SIZE)
+        tf_key = self._get_tf_key(key)
+        return iv + self._cbc_encrypt(padded, tf_key, iv)
 
     def encrypt_deterministic(self, data: bytes, key: bytes, iv: bytes = None) -> bytes:
         if iv is None:
@@ -289,23 +301,13 @@ class TwofishCipher(BaseCipher):
         else:
             iv = iv[:self.BLOCK_SIZE].ljust(self.BLOCK_SIZE, b'\x00')
         padded = pad(data, self.BLOCK_SIZE)
-        tf_key = _TwofishKey(key)
-
-        ct = bytearray()
-        prev = iv
-        for i in range(0, len(padded), self.BLOCK_SIZE):
-            block = padded[i:i + self.BLOCK_SIZE]
-            xored = _xor_bytes(block, prev)
-            encrypted = _twofish_encrypt_block(xored, tf_key)
-            ct.extend(encrypted)
-            prev = encrypted
-
-        return bytes(ct)
+        tf_key = self._get_tf_key(key)
+        return self._cbc_encrypt(padded, tf_key, iv)
 
     def decrypt(self, data: bytes, key: bytes) -> bytes:
         iv = data[:self.BLOCK_SIZE]
         ct = data[self.BLOCK_SIZE:]
-        tf_key = _TwofishKey(key)
+        tf_key = self._get_tf_key(key)
 
         pt = bytearray()
         prev = iv

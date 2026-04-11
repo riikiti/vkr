@@ -105,6 +105,16 @@ class RC6Cipher(BaseCipher):
     KEY_SIZE = 32   # 256 бит
     BLOCK_SIZE = 16  # 128 бит
 
+    def __init__(self):
+        self._cached_key_bytes = None
+        self._cached_S = None
+
+    def _get_schedule(self, key: bytes):
+        if self._cached_key_bytes != key:
+            self._cached_key_bytes = key
+            self._cached_S = _key_schedule(key)
+        return self._cached_S
+
     @property
     def name(self) -> str:
         return "RC6"
@@ -112,11 +122,7 @@ class RC6Cipher(BaseCipher):
     def generate_key(self) -> bytes:
         return get_random_bytes(self.KEY_SIZE)
 
-    def encrypt(self, data: bytes, key: bytes) -> bytes:
-        iv = get_random_bytes(self.BLOCK_SIZE)
-        padded = pad(data, self.BLOCK_SIZE)
-        S = _key_schedule(key)
-
+    def _cbc_encrypt(self, padded: bytes, S, iv: bytes) -> bytes:
         ct = bytearray()
         prev = iv
         for i in range(0, len(padded), self.BLOCK_SIZE):
@@ -125,8 +131,13 @@ class RC6Cipher(BaseCipher):
             encrypted = _rc6_encrypt_block(xored, S)
             ct.extend(encrypted)
             prev = encrypted
+        return bytes(ct)
 
-        return iv + bytes(ct)
+    def encrypt(self, data: bytes, key: bytes) -> bytes:
+        iv = get_random_bytes(self.BLOCK_SIZE)
+        padded = pad(data, self.BLOCK_SIZE)
+        S = self._get_schedule(key)
+        return iv + self._cbc_encrypt(padded, S, iv)
 
     def encrypt_deterministic(self, data: bytes, key: bytes, iv: bytes = None) -> bytes:
         if iv is None:
@@ -134,23 +145,13 @@ class RC6Cipher(BaseCipher):
         else:
             iv = iv[:self.BLOCK_SIZE].ljust(self.BLOCK_SIZE, b'\x00')
         padded = pad(data, self.BLOCK_SIZE)
-        S = _key_schedule(key)
-
-        ct = bytearray()
-        prev = iv
-        for i in range(0, len(padded), self.BLOCK_SIZE):
-            block = padded[i:i + self.BLOCK_SIZE]
-            xored = _xor_bytes(block, prev)
-            encrypted = _rc6_encrypt_block(xored, S)
-            ct.extend(encrypted)
-            prev = encrypted
-
-        return bytes(ct)
+        S = self._get_schedule(key)
+        return self._cbc_encrypt(padded, S, iv)
 
     def decrypt(self, data: bytes, key: bytes) -> bytes:
         iv = data[:self.BLOCK_SIZE]
         ct = data[self.BLOCK_SIZE:]
-        S = _key_schedule(key)
+        S = self._get_schedule(key)
 
         pt = bytearray()
         prev = iv

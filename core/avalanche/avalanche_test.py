@@ -25,15 +25,37 @@ def hamming_distance_bytes(a: bytes, b: bytes) -> int:
     return int(np.unpackbits(xor).sum())
 
 
-def avalanche_coefficient(cipher_1: bytes, cipher_2: bytes) -> float:
+def avalanche_coefficient(
+    cipher_1: bytes,
+    cipher_2: bytes,
+    block_size: int = 0,
+    flipped_bit_pos: int = 0,
+) -> float:
     """
     Коэффициент лавинного эффекта для одной пары шифртекстов.
+
+    Для блочных шифров в режиме CBC измеряет эффект только по блоку,
+    содержащему изменённый бит (SAC — Strict Avalanche Criterion).
+    Для потоковых шифров или если block_size=0 — по всему шифртексту.
     """
-    total_bits = min(len(cipher_1), len(cipher_2)) * 8
-    if total_bits == 0:
-        return 0.0
-    changed = hamming_distance_bytes(cipher_1, cipher_2)
-    return changed / total_bits
+    if block_size > 0 and len(cipher_1) > block_size:
+        # Определяем блок, содержащий изменённый бит
+        block_idx = flipped_bit_pos // (block_size * 8)
+        start = block_idx * block_size
+        end = start + block_size
+        block_1 = cipher_1[start:end]
+        block_2 = cipher_2[start:end]
+        total_bits = block_size * 8
+        if total_bits == 0:
+            return 0.0
+        changed = hamming_distance_bytes(block_1, block_2)
+        return changed / total_bits
+    else:
+        total_bits = min(len(cipher_1), len(cipher_2)) * 8
+        if total_bits == 0:
+            return 0.0
+        changed = hamming_distance_bytes(cipher_1, cipher_2)
+        return changed / total_bits
 
 
 def run_avalanche_test(
@@ -60,11 +82,18 @@ def run_avalanche_test(
     ciphertext_base = cipher.encrypt_deterministic(data, key, iv=None)
     coefficients = []
 
+    # Определяем размер блока для блочных шифров
+    block_size = getattr(cipher, 'BLOCK_SIZE', 0)
+
     for _ in range(n_tests):
         bit_pos = int(rng.integers(0, total_bits))
         data_flipped = flip_bit(data, bit_pos)
         ciphertext_flipped = cipher.encrypt_deterministic(data_flipped, key, iv=None)
-        coef = avalanche_coefficient(ciphertext_base, ciphertext_flipped)
+        coef = avalanche_coefficient(
+            ciphertext_base, ciphertext_flipped,
+            block_size=block_size,
+            flipped_bit_pos=bit_pos,
+        )
         coefficients.append(coef)
 
     coefficients = np.array(coefficients)
@@ -94,11 +123,16 @@ def run_avalanche_test_per_bit(
     total_bits = min(len(data) * 8, sample_bits)
     positions = list(range(total_bits))
     coefficients = []
+    block_size = getattr(cipher, 'BLOCK_SIZE', 0)
 
     for pos in positions:
         data_flipped = flip_bit(data, pos)
         ciphertext_flipped = cipher.encrypt_deterministic(data_flipped, key)
-        coef = avalanche_coefficient(ciphertext_base, ciphertext_flipped)
+        coef = avalanche_coefficient(
+            ciphertext_base, ciphertext_flipped,
+            block_size=block_size,
+            flipped_bit_pos=pos,
+        )
         coefficients.append(coef)
 
     return {
