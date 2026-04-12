@@ -78,6 +78,22 @@ function screenshotImage(filename, widthCm) {
   });
 }
 
+function chartImage(filename, widthCm) {
+  const filePath = path.join(__dirname, "../charts", filename);
+  const data = fs.readFileSync(filePath);
+  const w = data.readUInt32BE(16);
+  const h = data.readUInt32BE(20);
+  const aspect = h / w;
+  const widthPx = Math.round(widthCm * 37.8);
+  const heightPx = Math.round(widthPx * aspect);
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { after: 0, before: 120, line: LINE_SPACING },
+    indent: { firstLine: 0 },
+    children: [new ImageRun({ type: "png", data, transformation: { width: widthPx, height: heightPx } })],
+  });
+}
+
 function figureCaption(text) {
   return p(text, { align: AlignmentType.CENTER, size: SMALL_SIZE, bold: true, noIndent: true, after: 120 });
 }
@@ -278,7 +294,7 @@ function generate() {
 
   // --- Рисунок 2 ---
   children.push(emptyLine());
-  children.push(screenshotImage("06_comparison.png", 15));
+  children.push(chartImage("chart3_radar.png", 15));
   children.push(figureCaption("Рис. 2. Радарная диаграмма комплексной оценки алгоритмов шифрования"));
   children.push(emptyLine());
 

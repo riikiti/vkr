@@ -77,6 +77,22 @@ function screenshotImage(filename, widthCm) {
   });
 }
 
+function chartImage(filename, widthCm) {
+  const filePath = path.join(__dirname, "../charts", filename);
+  const data = fs.readFileSync(filePath);
+  const w = data.readUInt32BE(16);
+  const h = data.readUInt32BE(20);
+  const aspect = h / w;
+  const widthPx = Math.round(widthCm * 37.8);
+  const heightPx = Math.round(widthPx * aspect);
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { after: 0, before: 120, line: LINE_SPACING },
+    indent: { firstLine: 0 },
+    children: [new ImageRun({ type: "png", data, transformation: { width: widthPx, height: heightPx } })],
+  });
+}
+
 function figureCaption(text) {
   return p(text, { align: AlignmentType.CENTER, size: SMALL_SIZE, bold: true, noIndent: true, after: 120 });
 }
@@ -291,7 +307,7 @@ function generate() {
   children.push(bodyParagraph("Попарное сравнение подтверждает закономерности эволюции алгоритмов. DES и 3DES: трёхкратное применение DES улучшает энтропию (H = 7,9988 против 7,9982) и KL-дивергенцию (0,0361 против 0,0512), однако оба сохраняют 64-битный блок. DES и AES-128: AES превосходит DES по всем метрикам благодаря SPN-архитектуре и 128-битному блоку. Twofish и Blowfish: Twofish (S = 0,9996) демонстрирует улучшение по сравнению с предшественником Blowfish за счёт 128-битного блока и ключезависимых S-блоков. RC6 и RC4: при близкой энтропии (H > 7,99) RC6 кардинально превосходит RC4 по лавинному эффекту (AC \u2248 0,50 против 0,0001), что подтверждает преимущество блочной архитектуры над потоковой в задачах, требующих диффузии."));
 
   // --- Рисунок 3 ---
-  children.push(screenshotImage("06_comparison.png", 15));
+  children.push(chartImage("chart3_radar.png", 15));
   children.push(figureCaption("Рис. 3. Радарная диаграмма комплексной оценки"));
 
   // ==================== ЗАКЛЮЧЕНИЕ ====================

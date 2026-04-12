@@ -271,127 +271,136 @@ function drawAvalancheChart() {
   console.log('Chart 2: Avalanche saved');
 }
 
-// ===================== CHART 3: Radar Chart =====================
-function drawRadarChart() {
-  const W = 700, H = 650;
+// ===================== CHART 3: Grouped Bar Chart =====================
+function drawGroupedBarChart() {
+  const W = 900, H = 520;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext('2d');
 
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, W, H);
 
-  const cx = W / 2, cy = H / 2 + 20;
-  const radius = 220;
+  const margin = { top: 50, right: 30, bottom: 90, left: 70 };
+  const chartW = W - margin.left - margin.right;
+  const chartH = H - margin.top - margin.bottom;
 
-  const metrics = ['Энтропия', 'KL-дивергенция', 'Лавинный\nэффект', 'Корреляция'];
-  const numAxes = metrics.length;
-  const angleStep = (2 * Math.PI) / numAxes;
-  const startAngle = -Math.PI / 2;
+  const showAlgos = ['AES', 'DES', '3DES', 'BLOWFISH', 'TWOFISH', 'RC6', 'GOST'];
+  const metrics = [
+    { key: 'score_entropy', label: 'Энтропия', color: '#2196F3' },
+    { key: 'score_avalanche', label: 'Лавинный эффект', color: '#4CAF50' },
+    { key: 'score_corr', label: 'Корреляция', color: '#FF9800' },
+  ];
 
   // Title
   ctx.fillStyle = '#000000';
   ctx.font = 'bold 16px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Радарная диаграмма комплексной оценки алгоритмов', W / 2, 25);
+  ctx.fillText('Комплексная оценка криптостойкости алгоритмов', W / 2, 30);
 
-  // Draw grid circles
-  ctx.strokeStyle = '#dddddd';
-  ctx.lineWidth = 0.5;
-  for (let level = 1; level <= 5; level++) {
-    const r = radius * level / 5;
-    ctx.beginPath();
-    for (let i = 0; i <= numAxes; i++) {
-      const angle = startAngle + angleStep * i;
-      const px = cx + r * Math.cos(angle);
-      const py = cy + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-    // Level label
-    ctx.fillStyle = '#999999';
-    ctx.font = '10px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText((level / 5).toFixed(1), cx + 3, cy - r + 12);
-  }
-
-  // Draw axes
-  ctx.strokeStyle = '#999999';
+  // Axes
+  ctx.strokeStyle = '#333333';
   ctx.lineWidth = 1;
-  for (let i = 0; i < numAxes; i++) {
-    const angle = startAngle + angleStep * i;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, margin.top + chartH);
+  ctx.lineTo(margin.left + chartW, margin.top + chartH);
+  ctx.stroke();
+
+  // Y range: 0.96 .. 1.00
+  const minVal = 0.96;
+  const maxVal = 1.005;
+  const ySteps = 5;
+
+  // Y grid + labels
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#333333';
+  for (let i = 0; i <= ySteps; i++) {
+    const val = minVal + (maxVal - minVal) * i / ySteps;
+    const y = margin.top + chartH - (chartH * i / ySteps);
+    ctx.fillText(val.toFixed(3), margin.left - 8, y + 4);
+    ctx.strokeStyle = '#e0e0e0';
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+    ctx.moveTo(margin.left, y);
+    ctx.lineTo(margin.left + chartW, y);
     ctx.stroke();
   }
 
-  // Axis labels
+  // Ideal line at 1.0
+  ctx.strokeStyle = '#cc0000';
+  ctx.setLineDash([6, 4]);
+  ctx.lineWidth = 1.5;
+  const idealY = margin.top + chartH - chartH * ((1.0 - minVal) / (maxVal - minVal));
+  ctx.beginPath();
+  ctx.moveTo(margin.left, idealY);
+  ctx.lineTo(margin.left + chartW, idealY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#cc0000';
+  ctx.font = '11px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('идеал (1.0)', margin.left + chartW - 80, idealY - 5);
+
+  // Grouped bars
+  const numAlgos = showAlgos.length;
+  const numMetrics = metrics.length;
+  const groupW = chartW / numAlgos;
+  const barW = groupW * 0.7 / numMetrics;
+  const groupPad = groupW * 0.15;
+
+  for (let ai = 0; ai < numAlgos; ai++) {
+    const r = getRanking(showAlgos[ai]);
+    if (!r) continue;
+
+    for (let mi = 0; mi < numMetrics; mi++) {
+      const val = r[metrics[mi].key] || 0;
+      const clampedVal = Math.max(minVal, Math.min(maxVal, val));
+      const barH = chartH * ((clampedVal - minVal) / (maxVal - minVal));
+      const x = margin.left + groupW * ai + groupPad + barW * mi;
+      const y = margin.top + chartH - barH;
+
+      ctx.fillStyle = metrics[mi].color;
+      ctx.fillRect(x, y, barW - 1, barH);
+
+      // Value on top
+      ctx.fillStyle = '#000000';
+      ctx.font = '9px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(val.toFixed(3), x + barW / 2, y - 3);
+    }
+
+    // Algo label
+    ctx.fillStyle = '#333333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(showAlgos[ai], margin.left + groupW * ai + groupW / 2, margin.top + chartH + 18);
+  }
+
+  // Y axis title
+  ctx.save();
+  ctx.translate(15, margin.top + chartH / 2);
+  ctx.rotate(-Math.PI / 2);
   ctx.fillStyle = '#333333';
   ctx.font = '13px Arial';
   ctx.textAlign = 'center';
-  for (let i = 0; i < numAxes; i++) {
-    const angle = startAngle + angleStep * i;
-    const lx = cx + (radius + 35) * Math.cos(angle);
-    const ly = cy + (radius + 35) * Math.sin(angle);
-    const lines = metrics[i].split('\n');
-    lines.forEach((line, j) => {
-      ctx.fillText(line, lx, ly + j * 15);
-    });
-  }
-
-  // Draw data for selected algorithms (show top algos for clarity)
-  const showAlgos = ['AES', 'DES', 'BLOWFISH', 'GOST', 'RC6', 'TWOFISH'];
-  const algoColors = {
-    'AES': '#2196F3', 'DES': '#f44336', '3DES': '#FF9800',
-    'BLOWFISH': '#4CAF50', 'TWOFISH': '#9C27B0', 'RC6': '#795548', 'GOST': '#607D8B'
-  };
-
-  for (const algo of showAlgos) {
-    const r = getRanking(algo);
-    if (!r) continue;
-
-    const scores = [
-      r.score_entropy || 0,
-      Math.min(r.score_kl * 1e8, 1), // normalize - KL scores are very small
-      r.score_avalanche || 0,
-      r.score_corr || 0
-    ];
-
-    ctx.strokeStyle = algoColors[algo] || '#000000';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let i = 0; i <= numAxes; i++) {
-      const idx = i % numAxes;
-      const angle = startAngle + angleStep * idx;
-      const val = Math.max(0, Math.min(1, scores[idx]));
-      const px = cx + radius * val * Math.cos(angle);
-      const py = cy + radius * val * Math.sin(angle);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-
-    // Fill with transparency
-    ctx.fillStyle = (algoColors[algo] || '#000000') + '15';
-    ctx.fill();
-  }
+  ctx.fillText('Оценка (0–1)', 0, 0);
+  ctx.restore();
 
   // Legend
-  let legendY = H - 35;
-  let legendX = 50;
+  let legendX = margin.left + 20;
+  const legendY = H - 25;
   ctx.font = '12px Arial';
-  for (const algo of showAlgos) {
-    ctx.fillStyle = algoColors[algo] || '#000000';
-    ctx.fillRect(legendX, legendY - 8, 14, 14);
+  for (const m of metrics) {
+    ctx.fillStyle = m.color;
+    ctx.fillRect(legendX, legendY - 9, 14, 14);
     ctx.fillStyle = '#333333';
     ctx.textAlign = 'left';
-    ctx.fillText(algo, legendX + 18, legendY + 4);
-    legendX += 100;
+    ctx.fillText(m.label, legendX + 18, legendY + 3);
+    legendX += 180;
   }
 
   writeFileSync(`${OUT}/chart3_radar.png`, canvas.toBuffer('image/png'));
-  console.log('Chart 3: Radar saved');
+  console.log('Chart 3: Grouped bar saved');
 }
 
 // Create output directory and generate
@@ -400,5 +409,5 @@ try { mkdirSync(OUT, { recursive: true }); } catch {}
 
 drawEntropyChart();
 drawAvalancheChart();
-drawRadarChart();
+drawGroupedBarChart();
 console.log('All charts generated!');
